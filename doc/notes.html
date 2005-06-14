@@ -1,0 +1,382 @@
+<html>
+<title>
+ASN.1 tools for Python
+</title>
+<body>
+<center>
+<table width=70%>
+<tr>
+<td>
+<h3>
+ASN.1 tools for Python
+</h3>
+
+<p>
+Whenever data structures are described in some machine and programming language
+independent and unambiguous way, such specification is called 
+<a href=http://en.wikipedia.org/wiki/Abstract_syntax>abstract syntax</a>,
+by contrast with machine/language specific methods, which are called 'concrete'
+or 'transfer' syntaxes.
+</p>
+
+<p>
+Abstract syntaxes appear useful in networking as a tool for engineering
+protocols in a clear and portable way. Moreover, once a protocol 
+is described in some abstract language, protocol parsers and builders
+could be automatically generated for various computing
+architectures/programming languages, thus saving engineers from implementing 
+low-level transport details by hand.
+</p>
+
+<p>
+Abstract Syntax Notation One (
+<a href=http://en.wikipedia.org/wiki/Abstract_Syntax_Notation_1x>ASN.1</a>
+) is a set of 
+<a href=http://www.itu.int/ITU-T/studygroups/com17/languages/X.680-X.693-0207w.zip>
+ITU standards</a> defining particular implementation of abstract data
+description language accompanied by a collection of transfer encoding methods.
+Perhaps the most widely used among these data serialization methods is Basic
+Encoding Rules (
+<a href=http://en.wikipedia.org/wiki/Basic_encoding_rules>BER</a>
+) together with its derivatives (
+<a href=http://en.wikipedia.org/wiki/Distinguished_encoding_rules>DER</a>
+and
+<a href=http://en.wikipedia.org/wiki/Canonical_encoding_rules>CER</a>
+), while Packed Encoding Rules
+<a href=http://en.wikipedia.org/wiki/Packed_encoding_rules>PER</a>
+) aims at most compact data representation whilst in the wire.
+</p>
+
+<p>
+This project is dedicated to implementation of ASN.1 types (concrete 
+syntax) and codecs (transfer syntaxes) for Python programming environment.
+ASN.1 compiler is planned for implementation in the future.
+</p>
+
+<h3>
+Data model for ASN.1 types
+</h3>
+
+<p>
+The ASN.1 standard defines a set of <i>primitive</i>, scalar data types
+(such as Integer, String etc) and a few <i>constructed</i> types, each
+holding one or many other ASN.1 types as its components (constructed
+types may be viewed as Pascal "records" or C "struct"ures).
+</p>
+
+<p>
+In pyasn1, those primitive ASN.1 types are implemented as 
+immutable scalar objects. They could be used just like corresponding
+native Python types (integers, strings etc).
+</p>
+
+<pre>
+>>> from pyasn1.type import univ
+>>> univ.Integer(12) - 2
+10
+>>> univ.OctetString('abc') == 'abc'
+True
+>>>
+</pre>
+
+<p>
+In ASN.1, constructed types (Sequence, SequenceOf, Set, SetOf, Choice)
+differ from each other by allowed components combination and ordering, which
+also projects to component addressing methods.
+</p>
+
+<p>
+In this Python implementation, constructed ASN.1 types behave like 
+Python sequence, and also support additional component addressing methods,
+specific to particular constructed type.
+</p>
+
+<p>
+Components of <i>Sequence</i>s can be addressed by their position in sequence:
+</p>
+
+<pre>
+>>> from pyasn1.type import univ, namedtype
+>>> seq = univ.Sequence(componentType=namedtype.NamedTypes(namedtype.NamedType('version', univ.Integer())))
+>>> seq.setComponentByPosition(0, univ.Integer())
+>>> seq.getComponentByPosition(0)
+Integer(0)
+>>>
+</pre>
+
+<p>
+and by [textual] component type name (also valid for <i>Set</i> and 
+<i>Choice</i>), 
+</p>
+
+<pre>
+>>> seq.getComponentByName('version')
+Integer(0)
+>>>
+</pre>
+
+<p>
+as well as by type for Set and Choice:
+</p>
+
+<pre>
+>>> set = univ.Set(componentType=namedtype.NamedTypes(namedtype.NamedType('version', univ.Integer())))
+>>> set.setComponentByPosition(0, univ.Integer())
+>>> set.getComponentByType(univ.Integer().getTagSet())
+Integer(0)
+>>>
+</pre>
+
+<p>
+ASN.1 types are identified by a numeric ID called <i>tag</i>. In pyasn1, 
+tags are implemented as immutable objects referred by ASN.1 type objects:
+</p>
+
+<pre>
+from pyasn1.type import tag
+>>> tag.Tag(tag.tagClassUniversal, tag.tagFormatSimple, 3)
+Tag(tagClass=0, tagFormat=0, tagId=3)
+>>>
+</pre>
+
+<p>
+For the purpose of making same-typed objects distinguishable from one 
+another, the standard allows for assigning custom tags to 
+ASN.1 types. These <i>tagged types</i> preserve all properties of their 
+parent type but possess different IDs.
+</p>
+
+<p>
+There are two methods of tagging: <i>implicit</i> and <i>explicit</i>. The
+first one replaces base tag with arbitrary custom tag thus dropping all
+previously existing tag information for type:
+</p>
+
+<pre>
+>>> t = tag.TagSet(tag.Tag(tag.tagClassUniversal, tag.tagFormatSimple, 3))
+>>> t.tagImplicitly(tag.Tag(tag.tagClassPrivate, tag.tagFormatSimple, 32))
+TagSet(Tag(tagClass=192, tagFormat=0, tagId=32))
+>>>
+</pre>
+
+<p>
+The explicit tag is build by appending new custom tag to already
+existing set of type's tags. Important property of explicit tagging
+is that it preserves base type information.
+</p>
+
+<pre>
+>>> t = tag.TagSet(tag.Tag(tag.tagClassUniversal, tag.tagFormatSimple, 3)
+>>> t.tagExplicitly(tag.Tag(tag.tagClassPrivate, tag.tagFormatSimple, 32))
+TagSet(Tag(tagClass=192, tagFormat=32, tagId=32), Tag(tagClass=0, tagFormat=0, tagId=3))
+>>>
+</pre>
+
+<p>
+Besides tags, certain restrictions may be put upon ASN.1 types' values thus 
+creating <i>subtypes</i> from base types (in computer science, a 
+<a href=http://en.wikipedia.org/wiki/Data_type>data type</a>
+is a name of a collection of possible values). These restrictions are called
+<i>subtype constraints</i> in the ASN.1 standard.
+</p>
+
+<p>
+Several different flavors of <i>constraints</i> exist. Some obvious
+include <i>ValueRangeConstraint</i>, <i>ValueSizeConstraint</i> and others.
+In pyasn1, constraints take shape of immutable objects capable
+of evaluating given value against constraint's specific logic.
+</p>
+
+<pre>
+>>> from pyasn1.type import constraint
+>>> constraint.ValueRangeConstraint(1,2)
+ValueRangeConstraint(1,2)
+>>>
+</pre>
+
+<p>
+Multiple constraints can be combined altogether into sets with three basic
+boolean operations (<i>ConstraintsUnion</i>, <i>ConstraintsIntersection</i> and
+<i>ConstraintsExclusion</i>), which could be applied recursively. 
+</p>
+
+<pre>
+>>> c = constraint.ConstraintsUnion(constraint.SingleValueConstraint(4), constraint.ValueRangeConstraint(-1, 2))
+>>> c(1)
+>>> c(3)
+pyasn1.type.error.ValueConstraintError: ConstraintsUnion(SingleValueConstraint(4), ValueRangeConstraint(-1, 2)) failed at: all of (SingleValueConstraint(4), ValueRangeConstraint(-1, 2)) failed for 5
+>>>
+</pre>
+
+<p>
+A constrainted ASN.1 type would then hold a reference to a top-most constraint
+object in a set and pass it a value, being assigned, for verification.
+</p>
+
+<p>
+By evaluating the inclusion of all tags and constraints of one type in
+tag and constraint sets of another, it's possible to figure out the
+relationships between types. By way of background, types matching is used
+in constructed types for by-type component addressing.
+</p>
+
+<pre>
+>>> i1 = univ.Integer(subtypeSpec=constraint.SingleValueConstraint(0,3))
+>>> i2 = univ.Integer(subtypeSpec=constraint.ConstraintsIntersection(constraint.SingleValueConstraint(0,3),
+                      constraint.SingleValueConstraint(6,8)))
+>>> i1.isSameTypeWith(i2)
+False
+>>> i1.isSuperTypeOf(i2)
+True
+>>>
+</pre>
+
+<p>
+While complete documentation on the API to all these ASN.1 items is not
+yet written, please, refer to example uses and source code for additional
+information.
+</p>
+
+<h3>
+Codec notes
+</h3>
+
+<p>
+In ASN.1 context, 
+<a href=http://en.wikipedia.org/wiki/Codec>codec</a>
+is a program that transforms between concrete data structures and a stream
+of octets suitable for transmission over the wire. This serialized form of
+data is sometimes called <i>substrate</i> or <i>essence</i>.
+</p>
+
+<p>
+One of the properties of a codec is its ability to cope with incomplete
+data and/or substrate what implies codec to be stateful. In other words, 
+when decoder runs out of substrate and data item being recovered is still 
+incomplete, stateful codec would suspend and complete data item recovery 
+whenever the rest of substrate becomes available. Similarly, stateful encoder
+would encode data items in multiple steps waiting for source data to
+arrive.
+</p>
+
+<p>
+Codec restartability is especially important when application deals with large
+volumes of data and/or runs on low RAM.
+</p>
+
+<p>
+For an interesting discussion on codecs options and design choices, refer to
+<a href=http://directory.apache.org/subprojects/asn1/>Apache ASN.1 project</a>
+.
+</p>
+
+<p>
+As of this writing, codecs implemented in pyasn1 are all stateless, mostly
+to keep the code simple.
+</p>
+
+<p>
+The pyasn1 package currently supports BER codec and its derivates -- CER and
+DER. Encoder is used for transforming ASN.1 object into substrate:
+</p>
+
+<pre>
+>>> from pyasn1.type import univ
+>>> from pyasn1.codec.ber import encoder
+>>> encoder.encode(univ.Integer(12))
+'\x02\x01\x0c'
+>>>
+</pre>
+
+<p>
+while decoder recovers ASN.1 objects from substrate:
+</p>
+
+<pre>
+>>> from pyasn1.codec.ber import decoder
+>>> decoder.decode('\x02\x01\x0c')
+Integer(12), ''
+>>>
+</pre>
+
+<p>
+Depending of encoding and tagging methods used, decoder may require
+to know ASN.1 syntax of data structure to be decoded. For example,
+PER-encoded or implicitly tagged values would not recover from substrate
+without knowing ASN.1 syntax of encoded data. Whenever decoder is
+given ASN.1 specification, this operation mode will be referred to as 
+<i>guided</i> throughout this document.
+</p>
+
+<p>
+The ASN.1 specification passed to decoder running in guided mode is simply
+a reference to the top-most ASN.1 type object of the concrete specification.
+Decoder would neither modify this specification object in any way nor use
+its current values, but rather use it as a pattern when creating new objects:
+</p>
+
+<pre>
+>>> from pyasn1.codec.ber import decoder
+>>> decoder.decode('\x02\x01\x0c', asn1Spec=univ.Integer())
+Integer(12), ''
+>>>
+</pre>
+
+<p>
+One of the properties of BER codec is its use of either definite or indefinite
+length specification for serialized data. Although indefinite length form
+is especially important for stateful codec (which could produce&consume 
+substrate in chunks), pyasn1 codecs fully support both length forms.
+</p>
+
+<p>
+Constructed encoding is another feature of BER, closely related to indefinite
+length form. In essence, large scalar value (such as ASN.1 <i>character</i> or
+<i>BitString</i> type) could be chopped into smaller chunks by encoder and
+transmitted incrementally.
+</p>
+
+<p>
+The following code would BER encode ASN.1 <i>OctetString</i> object using 
+constructed (chopped by 4th octet) and indefinite length form:
+</p>
+
+<pre>
+>>> from pyasn1.type import univ
+>>> from pyasn1.codec.ber import encoder
+>>> encoder.encode(univ.OctetString('Quick brown fox'), defMode=0, maxChunkSize=4)
+'$\x80\x04\x04Quic\x04\x04k br\x04\x04own \x04\x03fox\x00\x00'
+>>>
+</pre>
+
+<p>
+Nothing special is required on decoding side to recover from various encoding
+forms. BER decoder transparently handles all of them.
+</p>
+
+<h3>
+Availability
+</h3>
+
+<p>
+The pyasn1 package is distributed under terms and conditions of BSD-style
+license. See LICENSE file in the distribution. Source code is freely
+available from <a href=http://www.sf.net/projects/pyasn1/>project home</a>.
+</p>
+
+<h3>
+Feedback
+</h3>
+
+<p>
+Comments and fixes are welcome at
+<a href="mailto:ilya@glas.net">ilya@glas.net</a>
+.
+</p>
+
+</td>
+</tr>
+</table>
+</center>
+</body>
+</html>
