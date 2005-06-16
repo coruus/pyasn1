@@ -1,9 +1,9 @@
 from pyasn1.type import constraint, error
-#from pyasn1.test import unittest
+from pyasn1.error import PyAsn1Error
 try:
     import unittest
 except ImportError:
-    raise error.PyAsn1Error(
+    raise PyAsn1Error(
         'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
         )
 

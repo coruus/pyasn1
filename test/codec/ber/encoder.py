@@ -1,10 +1,10 @@
 from pyasn1.type import tag, namedtype, univ
 from pyasn1.codec.ber import encoder
-from pyasn1 import error
+from pyasn1.error import PyAsn1Error
 try:
     import unittest
 except ImportError:
-    raise error.PyAsn1Error(
+    raise PyAsn1Error(
         'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
         )
 
@@ -228,7 +228,7 @@ class ChoiceEncoderTestCase(unittest.TestCase):
     def testEmpty(self):
         try:
             encoder.encode(self.s)
-        except error.PyAsn1Error:
+        except PyAsn1Error:
             pass
         else:
             assert 0, 'encoded unset choice'

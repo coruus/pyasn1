@@ -1,8 +1,9 @@
 from pyasn1.type import tag
+from pyasn1.error import PyAsn1Error
 try:
     import unittest
 except ImportError:
-    raise error.PyAsn1Error(
+    raise PyAsn1Error(
         'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
         )
 
