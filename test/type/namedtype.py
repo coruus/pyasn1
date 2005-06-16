@@ -1,8 +1,9 @@
-from pyasn1.type import namedtype, univ, error
+from pyasn1.type import namedtype, univ
+from pyasn1.error import PyAsn1Error
 try:
     import unittest
 except ImportError:
-    raise error.PyAsn1Error(
+    raise PyAsn1Error(
         'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
         )
 
@@ -59,7 +60,7 @@ class NamedTypesCaseBase(unittest.TestCase):
     def testGetTypeMapWithDups(self):
         try:
             self.e.getTypeMap(1)
-        except error.PyAsn1Error:
+        except PyAsn1Error:
             pass
         else:
             assert 0, 'Duped types not noticed'
