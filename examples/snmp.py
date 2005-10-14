@@ -168,4 +168,4 @@ def mkRequest():
 msg = mkRequest()
 rMsg = decoder.decode(encoder.encode(msg), asn1Spec=msg)[0]
 #rMsg = decoder.decode(encoder.encode(msg))[0]
-print rMsg.prettyPrinter()
+print rMsg.prettyPrint()
