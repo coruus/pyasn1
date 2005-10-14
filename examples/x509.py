@@ -137,7 +137,7 @@ for certLine in sys.stdin.readlines():
             substrate = substrate + base64.b64decode(certLine)
 
         cert = decoder.decode(substrate, asn1Spec=certType)[0]
-        print cert.prettyPrinter()
+        print cert.prettyPrint()
         
         assert encoder.encode(cert) == substrate, 'cert recode fails'
         
