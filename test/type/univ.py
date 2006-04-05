@@ -222,6 +222,13 @@ class SequenceOf(unittest.TestCase):
             subtypeSpec=constraint.ConstraintsIntersection(constraint.SingleValueConstraint(1,3)),
             sizeSpec=constraint.ValueSizeConstraint(0,1)
             )
+    def testClone(self):
+        self.s1.setComponentByPosition(0, univ.OctetString('abc'))
+        s = self.s1.clone()
+        assert len(s) == 0
+        s = self.s1.clone(cloneValueFlag=1)
+        assert len(s) == 1
+        assert s.getComponentByPosition(0) == self.s1.getComponentByPosition(0)
         
 class Sequence(unittest.TestCase):
     def setUp(self):
@@ -250,7 +257,6 @@ class Sequence(unittest.TestCase):
         self.s1.clear()
         assert self.s1.getDefaultComponentByPosition(0) == None
         assert self.s1.getDefaultComponentByPosition(2) == univ.Integer(34)
-
     def testSetDefaultComponents(self):
         self.s1.clear()
         assert self.s1.getComponentByPosition(2) == None
@@ -258,7 +264,19 @@ class Sequence(unittest.TestCase):
         self.s1.setComponentByPosition(1, univ.OctetString('Pong'))
         self.s1.setDefaultComponents()
         assert self.s1.getComponentByPosition(2) == 34
-        
+    def testClone(self):
+        self.s1.setComponentByPosition(0, univ.OctetString('abc'))
+        self.s1.setComponentByPosition(1, univ.OctetString('def'))
+        self.s1.setComponentByPosition(2, univ.Integer(123))
+        s = self.s1.clone()
+        assert s.getComponentByPosition(0) != self.s1.getComponentByPosition(0)
+        assert s.getComponentByPosition(1) != self.s1.getComponentByPosition(1)
+        assert s.getComponentByPosition(2) != self.s1.getComponentByPosition(2)
+        s = self.s1.clone(cloneValueFlag=1)
+        assert s.getComponentByPosition(0) == self.s1.getComponentByPosition(0)
+        assert s.getComponentByPosition(1) == self.s1.getComponentByPosition(1)
+        assert s.getComponentByPosition(2) == self.s1.getComponentByPosition(2)
+
 class SetOf(unittest.TestCase):
     def setUp(self):
         self.s1 = univ.SetOf(componentType=univ.OctetString())
@@ -356,5 +374,12 @@ class Choice(unittest.TestCase):
     def testSetComponentByPosition(self):
         self.s1.setComponentByPosition(0, univ.OctetString('Jim'))
         assert self.s1 == 'Jim'
+    def testClone(self):
+        self.s1.setComponentByPosition(0, univ.OctetString('abc'))
+        s = self.s1.clone()
+        assert len(s) == 0
+        s = self.s1.clone(cloneValueFlag=1)
+        assert len(s) == 1
+        assert s.getComponentByPosition(0) == self.s1.getComponentByPosition(0)
         
 if __name__ == '__main__': unittest.main()
