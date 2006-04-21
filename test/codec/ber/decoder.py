@@ -49,21 +49,20 @@ class BooleanDecoderTestCase(unittest.TestCase):
 class BitStringDecoderTestCase(unittest.TestCase):
     def testDefMode(self):
         assert decoder.decode(
-            '\x03\x03\x00\xa9\x8a'
-            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1,0), '')
+            '\x03\x03\x01\xa9\x8a'
+            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1), '')
     def testIndefMode(self):
         assert decoder.decode(
-            '#\x80\x03\x03\x00\xa9\x8a\x00\x00'
-            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1,0), '')
-
+            '\x03\x03\x01\xa9\x8a'
+            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1), '')
     def testDefModeChunked(self):
         assert decoder.decode(
-            '#\x08\x03\x02\x00\xa9\x03\x02\x00\x8a'
-            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1,0), '')
+            '#\x08\x03\x02\x00\xa9\x03\x02\x01\x8a'
+            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1), '')
     def testIndefModeChunked(self):
         assert decoder.decode(
-            '#\x80\x03\x02\x00\xa9\x03\x02\x00\x8a\x00\x00'
-            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1,0), '')
+            '#\x80\x03\x02\x00\xa9\x03\x02\x01\x8a\x00\x00'
+            ) == ((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1), '')
         
 class OctetStringDecoderTestCase(unittest.TestCase):
     def testDefMode(self):
