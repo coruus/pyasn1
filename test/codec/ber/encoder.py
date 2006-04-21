@@ -34,24 +34,21 @@ class BooleanEncoderTestCase(unittest.TestCase):
 
 class BitStringEncoderTestCase(unittest.TestCase):
     def setUp(self):
-        self.b = univ.BitString("'A98A'H")
+        self.b = univ.BitString((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1))
     def testDefMode(self):
-        assert encoder.encode(self.b) == '\x03\x03\x00\xa9\x8a'
-
+        assert encoder.encode(self.b) == '\x03\x03\x01\xa9\x8a'
     def testIndefMode(self):
         assert encoder.encode(
             self.b, defMode=0
-            ) == '\x03\x03\x00\xa9\x8a'
-        
+            ) == '\x03\x03\x01\xa9\x8a'
     def testDefModeChunked(self):
         assert encoder.encode(
             self.b, maxChunkSize=1
-            ) == '#\x08\x03\x02\x00\xa9\x03\x02\x00\x8a'
-
+            ) == '#\x08\x03\x02\x00\xa9\x03\x02\x01\x8a'
     def testIndefModeChunked(self):
         assert encoder.encode(
             self.b, defMode=0, maxChunkSize=1
-            ) == '#\x80\x03\x02\x00\xa9\x03\x02\x00\x8a\x00\x00'
+            ) == '#\x80\x03\x02\x00\xa9\x03\x02\x01\x8a\x00\x00'
         
 class OctetStringEncoderTestCase(unittest.TestCase):
     def setUp(self):
