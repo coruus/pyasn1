@@ -119,11 +119,11 @@ class ObjectIdentifierDecoderTestCase(unittest.TestCase):
 class SequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Sequence(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
-            namedtype.NamedType('first-name', univ.OctetString()),
+            namedtype.NamedType('place-holder', univ.Null('')),
+            namedtype.NamedType('first-name', univ.OctetString('')),
             namedtype.NamedType('age', univ.Integer(33)),
             ))
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         self.s.setComponentByPosition(1, univ.OctetString('quick brown'))
         self.s.setComponentByPosition(2, univ.Integer(1))
         self.s.setDefaultComponents()
@@ -151,31 +151,31 @@ class SequenceDecoderTestCase(unittest.TestCase):
 class GuidedSequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Sequence(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
-            namedtype.OptionalNamedType('first-name', univ.OctetString()),
+            namedtype.NamedType('place-holder', univ.Null('')),
+            namedtype.OptionalNamedType('first-name', univ.OctetString('')),
             namedtype.DefaultedNamedType('age', univ.Integer(33)),
             ))
 
     def __init(self):
         self.s.clear()
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         self.s.setDefaultComponents()
         
     def __initWithOptional(self):
         self.s.clear()
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         self.s.setComponentByPosition(1, univ.OctetString('quick brown'))
         self.s.setDefaultComponents()
 
     def __initWithDefaulted(self):
         self.s.clear()
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         self.s.setComponentByPosition(2, univ.Integer(1))
         self.s.setDefaultComponents()
         
     def __initWithOptionalAndDefaulted(self):
         self.s.clear()
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         self.s.setComponentByPosition(1, univ.OctetString('quick brown'))
         self.s.setComponentByPosition(2, univ.Integer(1))
         self.s.setDefaultComponents()
@@ -282,19 +282,19 @@ class GuidedSequenceDecoderTestCase(unittest.TestCase):
 class ChoiceDecoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Choice(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
-            namedtype.NamedType('number', univ.Integer())
+            namedtype.NamedType('place-holder', univ.Null('')),
+            namedtype.NamedType('number', univ.Integer(0))
             ))
 
     def testBySpec(self):
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         assert decoder.decode(
             '\x05\x00', asn1Spec=self.s
             ) == (self.s, '')
 
     def testWithoutSpec(self):
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         assert decoder.decode('\x05\x00') == (self.s, '')
-        assert decoder.decode('\x05\x00') == (univ.Null(), '')
+        assert decoder.decode('\x05\x00') == (univ.Null(''), '')
 
 if __name__ == '__main__': unittest.main()

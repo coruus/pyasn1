@@ -102,7 +102,7 @@ class OctetStringTestCase(unittest.TestCase):
     def testSeq(self):
         assert univ.OctetString('q')[0] == 'q','__getitem__() fails'
     def testAdd(self):
-        assert univ.OctetString() + 'q' == 'q', '__add__() fails'
+        assert univ.OctetString('') + 'q' == 'q', '__add__() fails'
     def testRadd(self):
         assert 'b' + univ.OctetString('q') == 'bq', '__radd__() fails'
     def testMul(self):
@@ -116,7 +116,7 @@ class OctetStringTestCase(unittest.TestCase):
             )
 
 class Null(unittest.TestCase):
-    def testStr(self): assert str(univ.Null()) == '', 'str() fails'
+    def testStr(self): assert str(univ.Null('')) == '', 'str() fails'
     def testTag(self):
         assert univ.Null().getTagSet() == tag.TagSet(
             (),
@@ -157,7 +157,7 @@ class ObjectIdentifier(unittest.TestCase):
 class SequenceOf(unittest.TestCase):
     def setUp(self):
         self.s1 = univ.SequenceOf(
-            componentType=univ.OctetString()
+            componentType=univ.OctetString('')
             )
         self.s2 = self.s1.clone()
     def testTag(self):
@@ -208,7 +208,7 @@ class SequenceOf(unittest.TestCase):
             assert 0, 'size spec fails'
     def testGetComponentTypeMap(self):
         assert self.s1.getComponentTypeMap() == {
-            univ.OctetString.tagSet: univ.OctetString()
+            univ.OctetString.tagSet: univ.OctetString('')
             }
     def testSubtype(self):
         self.s1.clear()
@@ -233,8 +233,8 @@ class SequenceOf(unittest.TestCase):
 class Sequence(unittest.TestCase):
     def setUp(self):
         self.s1 = univ.Sequence(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('name', univ.OctetString()),
-            namedtype.OptionalNamedType('nick', univ.OctetString()),
+            namedtype.NamedType('name', univ.OctetString('')),
+            namedtype.OptionalNamedType('nick', univ.OctetString('')),
             namedtype.DefaultedNamedType('age', univ.Integer(34))
             ))
     def testTag(self):
@@ -247,7 +247,7 @@ class Sequence(unittest.TestCase):
         assert self.s1.getComponentByName('name') == 'abc', 'set by name fails'
     def testGetNearPosition(self):
         assert self.s1.getComponentTypeMapNearPosition(1) == {
-            univ.OctetString.tagSet: univ.OctetString(),
+            univ.OctetString.tagSet: univ.OctetString(''),
             univ.Integer.tagSet: univ.Integer(34)
             }
         assert self.s1.getComponentPositionNearType(
@@ -279,7 +279,7 @@ class Sequence(unittest.TestCase):
 
 class SetOf(unittest.TestCase):
     def setUp(self):
-        self.s1 = univ.SetOf(componentType=univ.OctetString())
+        self.s1 = univ.SetOf(componentType=univ.OctetString(''))
     def testTag(self):
         assert self.s1.getTagSet() == tag.TagSet(
             (),
@@ -294,8 +294,8 @@ class SetOf(unittest.TestCase):
 class Set(unittest.TestCase):
     def setUp(self):
         self.s1 = univ.Set(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('name', univ.OctetString()),
-            namedtype.OptionalNamedType('null', univ.Null()),
+            namedtype.NamedType('name', univ.OctetString('')),
+            namedtype.OptionalNamedType('null', univ.Null('')),
             namedtype.DefaultedNamedType('age', univ.Integer(34))
             ))
         self.s2 = self.s1.clone()
@@ -320,8 +320,8 @@ class Set(unittest.TestCase):
             }
     def testGetComponentTypeMap(self):
         assert self.s1.getComponentTypeMap() == {
-            univ.OctetString.tagSet: univ.OctetString(),
-            univ.Null.tagSet: univ.Null(),
+            univ.OctetString.tagSet: univ.OctetString(''),
+            univ.Null.tagSet: univ.Null(''),
             univ.Integer.tagSet: univ.Integer(34)
             }
     def testGetPositionByType(self):

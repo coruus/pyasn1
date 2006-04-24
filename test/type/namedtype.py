@@ -17,9 +17,9 @@ class NamedTypeCaseBase(unittest.TestCase):
 class NamedTypesCaseBase(unittest.TestCase):
     def setUp(self):
         self.e = namedtype.NamedTypes(
-            namedtype.NamedType('first-name', univ.OctetString()),
-            namedtype.OptionalNamedType('age', univ.Integer()),
-            namedtype.NamedType('family-name', univ.OctetString())
+            namedtype.NamedType('first-name', univ.OctetString('')),
+            namedtype.OptionalNamedType('age', univ.Integer(0)),
+            namedtype.NamedType('family-name', univ.OctetString(''))
             )
     def testIter(self):
         for t in self.e:
@@ -28,7 +28,7 @@ class NamedTypesCaseBase(unittest.TestCase):
             assert 0, '__getitem__() fails'
             
     def testGetTypeByPosition(self):
-        assert self.e.getTypeByPosition(0) == univ.OctetString(), \
+        assert self.e.getTypeByPosition(0) == univ.OctetString(''), \
                'getTypeByPosition() fails'
 
     def testGetNameByPosition(self):
@@ -41,20 +41,20 @@ class NamedTypesCaseBase(unittest.TestCase):
 
     def testGetTypesNearPosition(self):
         assert self.e.getTypeMapNearPosition(0) == {
-            univ.OctetString.tagSet: univ.OctetString()
+            univ.OctetString.tagSet: univ.OctetString('')
             }
         assert self.e.getTypeMapNearPosition(1) == {
-            univ.Integer.tagSet: univ.Integer(),
-            univ.OctetString.tagSet: univ.OctetString()
+            univ.Integer.tagSet: univ.Integer(0),
+            univ.OctetString.tagSet: univ.OctetString('')
             }
         assert self.e.getTypeMapNearPosition(2) == {
-            univ.OctetString.tagSet: univ.OctetString()
+            univ.OctetString.tagSet: univ.OctetString('')
             }
 
     def testGetTypeMap(self):
         assert self.e.getTypeMap() == {
-            univ.OctetString.tagSet: univ.OctetString(),
-            univ.Integer.tagSet: univ.Integer()
+            univ.OctetString.tagSet: univ.OctetString(''),
+            univ.Integer.tagSet: univ.Integer(0)
             }
 
     def testGetTypeMapWithDups(self):
@@ -73,12 +73,12 @@ class NamedTypesCaseBase(unittest.TestCase):
 class OrderedNamedTypesCaseBase(unittest.TestCase):
     def setUp(self):
         self.e = namedtype.NamedTypes(
-            namedtype.NamedType('first-name', univ.OctetString()),
-            namedtype.NamedType('age', univ.Integer())
+            namedtype.NamedType('first-name', univ.OctetString('')),
+            namedtype.NamedType('age', univ.Integer(0))
             )
             
     def testGetTypeByPosition(self):
-        assert self.e.getTypeByPosition(0) == univ.OctetString(), \
+        assert self.e.getTypeByPosition(0) == univ.OctetString(''), \
                'getTypeByPosition() fails'
 
 if __name__ == '__main__': unittest.main()
