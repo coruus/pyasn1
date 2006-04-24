@@ -151,14 +151,14 @@ class Message(univ.Sequence):
 
 def mkRequest():
     msg = Message()
-    msg.setComponentByPosition(0)    
+    msg.setComponentByPosition(0)
     msg.setComponentByPosition(1, 'public')
     # pdu
     pdus = msg.setComponentByPosition(2).getComponentByPosition(2)
     pdu = pdus.setComponentByPosition(0).getComponentByPosition(0)
     pdu.setComponentByPosition(0, 123)
-    pdu.setComponentByPosition(1)
-    pdu.setComponentByPosition(2)
+    pdu.setComponentByPosition(1, 0)
+    pdu.setComponentByPosition(2, 0)
     vbl = pdu.setComponentByPosition(3).getComponentByPosition(3)
     vb = vbl.setComponentByPosition(0).getComponentByPosition(0)
     vb.setComponentByPosition(0, (1,3,6,1,2,1,1,1,0))
