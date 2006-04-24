@@ -91,7 +91,7 @@ class ExpTaggedOctetStringEncoderTestCase(unittest.TestCase):
 
 class NullEncoderTestCase(unittest.TestCase):
     def testNull(self):
-        assert encoder.encode(univ.Null()) == '\x05\x00'
+        assert encoder.encode(univ.Null('')) == '\x05\x00'
 
 class ObjectIdentifierEncoderTestCase(unittest.TestCase):
     def testNull(self):
@@ -102,8 +102,8 @@ class ObjectIdentifierEncoderTestCase(unittest.TestCase):
 class SequenceEncoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Sequence(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
-            namedtype.OptionalNamedType('first-name', univ.OctetString()),
+            namedtype.NamedType('place-holder', univ.Null('')),
+            namedtype.OptionalNamedType('first-name', univ.OctetString('')),
             namedtype.DefaultedNamedType('age', univ.Integer(33)),
             ))
 
@@ -123,7 +123,7 @@ class SequenceEncoderTestCase(unittest.TestCase):
         
     def __initWithOptionalAndDefaulted(self):
         self.s.clear()
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         self.s.setComponentByPosition(1, univ.OctetString('quick brown'))
         self.s.setComponentByPosition(2, univ.Integer(1))
         
@@ -218,8 +218,8 @@ class SequenceEncoderTestCase(unittest.TestCase):
 class ChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Choice(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
-            namedtype.NamedType('number', univ.Integer())
+            namedtype.NamedType('place-holder', univ.Null('')),
+            namedtype.NamedType('number', univ.Integer(0))
             ))
 
     def testEmpty(self):
@@ -231,7 +231,7 @@ class ChoiceEncoderTestCase(unittest.TestCase):
             assert 0, 'encoded unset choice'
         
     def testFilled(self):
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         assert encoder.encode(self.s) == '\x05\x00'
 
 if __name__ == '__main__': unittest.main()

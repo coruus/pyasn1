@@ -23,11 +23,11 @@ class BitStringEncoderTestCase(unittest.TestCase):
 class SetWithChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
         c = univ.Choice(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('name', univ.OctetString()),
-            namedtype.NamedType('amount', univ.Integer())
+            namedtype.NamedType('name', univ.OctetString('')),
+            namedtype.NamedType('amount', univ.Integer(0))
             ))
         self.s = univ.Set(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
+            namedtype.NamedType('place-holder', univ.Null('')),
             namedtype.NamedType('status', c)
             ))
 

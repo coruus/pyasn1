@@ -38,8 +38,8 @@ class OctetStringEncoderTestCase(unittest.TestCase):
 class SetEncoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Set(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
-            namedtype.OptionalNamedType('first-name', univ.OctetString()),
+            namedtype.NamedType('place-holder', univ.Null('')),
+            namedtype.OptionalNamedType('first-name', univ.OctetString('')),
             namedtype.DefaultedNamedType('age', univ.Integer(33))
             ))
 
@@ -58,7 +58,7 @@ class SetEncoderTestCase(unittest.TestCase):
         
     def __initWithOptionalAndDefaulted(self):
         self.s.clear()
-        self.s.setComponentByPosition(0, univ.Null())
+        self.s.setComponentByPosition(0, univ.Null(''))
         self.s.setComponentByPosition(1, univ.OctetString('quick brown'))
         self.s.setComponentByPosition(2, univ.Integer(1))
         
@@ -87,10 +87,10 @@ class SetEncoderTestCase(unittest.TestCase):
 class SetWithChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
         c = univ.Choice(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('actual', univ.Boolean())
+            namedtype.NamedType('actual', univ.Boolean(0))
             ))
         self.s = univ.Set(componentType=namedtype.NamedTypes(
-            namedtype.NamedType('place-holder', univ.Null()),
+            namedtype.NamedType('place-holder', univ.Null('')),
             namedtype.NamedType('status', c)
             ))
 
