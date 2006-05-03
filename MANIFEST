@@ -50,5 +50,6 @@ test/type/constraint.py
 test/type/namedtype.py
 examples/x509.py
 examples/snmp.py
+examples/sshkey.py
 TODO
 setup.py
