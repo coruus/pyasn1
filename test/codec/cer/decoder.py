@@ -10,18 +10,18 @@ except ImportError:
 
 class BooleanDecoderTestCase(unittest.TestCase):
     def testTrue(self):
-        assert decoder.decode('\x01\x01\xff') == (1, '')
+        assert decoder.decode('\001\001\377') == (1, '')
     def testFalse(self):
-        assert decoder.decode('\x01\x01\x00') == (0, '')
+        assert decoder.decode('\001\001\000') == (0, '')
         
 class OctetStringDecoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert decoder.decode(
-            '\x04\x0fQuick brown fox'
+            '\004\017Quick brown fox'
             ) == ('Quick brown fox', '')
     def testLongMode(self):
         assert decoder.decode(
-            '$\x80\x04\x82\x03\xe8' + 'Q'*1000 + '\x04\x01Q\x00\x00'
+            '$\200\004\202\003\350' + 'Q'*1000 + '\004\001Q\000\000'
             ) == ('Q'*1001, '')
 
 if __name__ == '__main__': unittest.main()

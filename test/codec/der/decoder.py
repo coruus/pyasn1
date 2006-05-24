@@ -11,7 +11,7 @@ except ImportError:
 class OctetStringDecoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert decoder.decode(
-            '\x04\x0fQuick brown fox'
+            '\004\017Quick brown fox'
             ) == ('Quick brown fox', '')
 
 if __name__ == '__main__': unittest.main()

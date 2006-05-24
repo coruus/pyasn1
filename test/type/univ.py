@@ -8,7 +8,7 @@ except ImportError:
         )
 
 class IntegerTestCase(unittest.TestCase):
-    def testStr(self): assert str(univ.Integer(1)) == '1', 'str() fails'
+    def testStr(self): assert str(univ.Integer(1)) in ('1','1L'),'str() fails'
     def testAnd(self): assert univ.Integer(1) & 0 == 0, '__and__() fails'
     def testOr(self): assert univ.Integer(1) | 0 == 1, '__or__() fails'
     def testXor(self): assert univ.Integer(1) ^ 0 == 1, '__xor__() fails'
@@ -46,7 +46,8 @@ class IntegerTestCase(unittest.TestCase):
         assert str(i) != 'asn1', 'named val __str__() fails'
 
 class BooleanTestCase(unittest.TestCase):
-    def testStr(self): assert str(univ.Boolean(1)) == '1', 'str() fails'
+    def testStr(self):
+        assert str(univ.Boolean(1)) in ('1', '1L'), 'str() fails'
     def testTag(self):
         assert univ.Boolean().getTagSet() == tag.TagSet(
             (),

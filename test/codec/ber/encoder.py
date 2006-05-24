@@ -10,63 +10,63 @@ except ImportError:
 
 class IntegerEncoderTestCase(unittest.TestCase):
     def testPosInt(self):
-        assert encoder.encode(univ.Integer(12)) == '\x02\x01\x0c'
+        assert encoder.encode(univ.Integer(12)) == '\002\001\014'
     def testNegInt(self):
-        assert encoder.encode(univ.Integer(-12)) == '\x02\x01\xf4'
+        assert encoder.encode(univ.Integer(-12)) == '\002\001\364'
     def testZero(self):
-        assert encoder.encode(univ.Integer(0)) == '\x02\x01\x00'
+        assert encoder.encode(univ.Integer(0)) == '\002\001\000'
     def testMinusOne(self):
-        assert encoder.encode(univ.Integer(-1)) == '\x02\x01\xff'
+        assert encoder.encode(univ.Integer(-1)) == '\002\001\377'
     def testPosLong(self):
         assert encoder.encode(
             univ.Integer(0xffffffffffffffffl)
-            ) == '\x02\t\x00\xff\xff\xff\xff\xff\xff\xff\xff'
+            ) == '\002\011\000\377\377\377\377\377\377\377\377'
     def testNegLong(self):
         assert encoder.encode(
             univ.Integer(-0xffffffffffffffffl)
-            ) == '\x02\t\xff\x00\x00\x00\x00\x00\x00\x00\x01'
+            ) == '\002\011\377\000\000\000\000\000\000\000\001'
 
 class BooleanEncoderTestCase(unittest.TestCase):
     def testTrue(self):
-        assert encoder.encode(univ.Boolean(1)) == '\x01\x01\x01'
+        assert encoder.encode(univ.Boolean(1)) == '\001\001\001'
     def testFalse(self):
-        assert encoder.encode(univ.Boolean(0)) == '\x01\x01\x00'
+        assert encoder.encode(univ.Boolean(0)) == '\001\001\000'
 
 class BitStringEncoderTestCase(unittest.TestCase):
     def setUp(self):
         self.b = univ.BitString((1,0,1,0,1,0,0,1,1,0,0,0,1,0,1))
     def testDefMode(self):
-        assert encoder.encode(self.b) == '\x03\x03\x01\xa9\x8a'
+        assert encoder.encode(self.b) == '\003\003\001\251\212'
     def testIndefMode(self):
         assert encoder.encode(
             self.b, defMode=0
-            ) == '\x03\x03\x01\xa9\x8a'
+            ) == '\003\003\001\251\212'
     def testDefModeChunked(self):
         assert encoder.encode(
             self.b, maxChunkSize=1
-            ) == '#\x08\x03\x02\x00\xa9\x03\x02\x01\x8a'
+            ) == '#\010\003\002\000\251\003\002\001\212'
     def testIndefModeChunked(self):
         assert encoder.encode(
             self.b, defMode=0, maxChunkSize=1
-            ) == '#\x80\x03\x02\x00\xa9\x03\x02\x01\x8a\x00\x00'
+            ) == '#\200\003\002\000\251\003\002\001\212\000\000'
         
 class OctetStringEncoderTestCase(unittest.TestCase):
     def setUp(self):
         self.o = univ.OctetString('Quick brown fox')
     def testDefMode(self):
-        assert encoder.encode(self.o) == '\x04\x0fQuick brown fox'
+        assert encoder.encode(self.o) == '\004\017Quick brown fox'
     def testIndefMode(self):
         assert encoder.encode(
             self.o, defMode=0
-            ) == '\x04\x0fQuick brown fox'
+            ) == '\004\017Quick brown fox'
     def testDefModeChunked(self):
         assert encoder.encode(
             self.o, maxChunkSize=4
-            ) == '$\x17\x04\x04Quic\x04\x04k br\x04\x04own \x04\x03fox'
+            ) == '$\027\004\004Quic\004\004k br\004\004own \004\003fox'
     def testIndefModeChunked(self):
         assert encoder.encode(
             self.o, defMode=0, maxChunkSize=4
-            ) == '$\x80\x04\x04Quic\x04\x04k br\x04\x04own \x04\x03fox\x00\x00'
+            ) == '$\200\004\004Quic\004\004k br\004\004own \004\003fox\000\000'
         
 class ExpTaggedOctetStringEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -75,29 +75,29 @@ class ExpTaggedOctetStringEncoderTestCase(unittest.TestCase):
             explicitTag=tag.Tag(tag.tagClassApplication,tag.tagFormatSimple,5)
             )
     def testDefMode(self):
-        assert encoder.encode(self.o) == 'e\x11\x04\x0fQuick brown fox'
+        assert encoder.encode(self.o) == 'e\021\004\017Quick brown fox'
     def testIndefMode(self):
         assert encoder.encode(
             self.o, defMode=0
-            ) == 'e\x80\x04\x0fQuick brown fox\x00\x00'
+            ) == 'e\200\004\017Quick brown fox\000\000'
     def testDefModeChunked(self):
         assert encoder.encode(
             self.o, defMode=1, maxChunkSize=4
-            ) == 'e\x19$\x17\x04\x04Quic\x04\x04k br\x04\x04own \x04\x03fox'
+            ) == 'e\031$\027\004\004Quic\004\004k br\004\004own \004\003fox'
     def testIndefModeChunked(self):
         assert encoder.encode(
             self.o, defMode=0, maxChunkSize=4
-            ) == 'e\x80$\x80\x04\x04Quic\x04\x04k br\x04\x04own \x04\x03fox\x00\x00\x00\x00'
+            ) == 'e\200$\200\004\004Quic\004\004k br\004\004own \004\003fox\000\000\000\000'
 
 class NullEncoderTestCase(unittest.TestCase):
     def testNull(self):
-        assert encoder.encode(univ.Null('')) == '\x05\x00'
+        assert encoder.encode(univ.Null('')) == '\005\000'
 
 class ObjectIdentifierEncoderTestCase(unittest.TestCase):
     def testNull(self):
         assert encoder.encode(
             univ.ObjectIdentifier((1,3,6,0,0xffffe))
-            ) == '\x06\x06+\x06\x00\xbf\xff~'
+            ) == '\006\006+\006\000\277\377~'
 
 class SequenceEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -129,91 +129,91 @@ class SequenceEncoderTestCase(unittest.TestCase):
         
     def testDefMode(self):
         self.__init()
-        assert encoder.encode(self.s) == '0\x02\x05\x00'
+        assert encoder.encode(self.s) == '0\002\005\000'
         
     def testIndefMode(self):
         self.__init()
         assert encoder.encode(
             self.s, defMode=0
-            ) == '0\x80\x05\x00\x00\x00'
+            ) == '0\200\005\000\000\000'
 
     def testDefModeChunked(self):
         self.__init()
         assert encoder.encode(
             self.s, defMode=1, maxChunkSize=4
-            ) == '0\x02\x05\x00'
+            ) == '0\002\005\000'
 
     def testIndefModeChunked(self):
         self.__init()
         assert encoder.encode(
             self.s, defMode=0, maxChunkSize=4
-            ) == '0\x80\x05\x00\x00\x00'
+            ) == '0\200\005\000\000\000'
 
     def testWithOptionalDefMode(self):
         self.__initWithOptional()
-        assert encoder.encode(self.s) == '0\x0f\x05\x00\x04\x0bquick brown'
+        assert encoder.encode(self.s) == '0\017\005\000\004\013quick brown'
         
     def testWithOptionalIndefMode(self):
         self.__initWithOptional()
         assert encoder.encode(
             self.s, defMode=0
-            ) == '0\x80\x05\x00\x04\x0bquick brown\x00\x00'
+            ) == '0\200\005\000\004\013quick brown\000\000'
 
     def testWithOptionalDefModeChunked(self):
         self.__initWithOptional()
         assert encoder.encode(
             self.s, defMode=1, maxChunkSize=4
-            ) == '0\x15\x05\x00$\x11\x04\x04quic\x04\x04k br\x04\x03own'
+            ) == '0\025\005\000$\021\004\004quic\004\004k br\004\003own'
 
     def testWithOptionalIndefModeChunked(self):
         self.__initWithOptional()
         assert encoder.encode(
             self.s, defMode=0, maxChunkSize=4
-            ) == '0\x80\x05\x00$\x80\x04\x04quic\x04\x04k br\x04\x03own\x00\x00\x00\x00'
+            ) == '0\200\005\000$\200\004\004quic\004\004k br\004\003own\000\000\000\000'
 
     def testWithDefaultedDefMode(self):
         self.__initWithDefaulted()
-        assert encoder.encode(self.s) == '0\x05\x05\x00\x02\x01\x01'
+        assert encoder.encode(self.s) == '0\005\005\000\002\001\001'
         
     def testWithDefaultedIndefMode(self):
         self.__initWithDefaulted()
         assert encoder.encode(
             self.s, defMode=0
-            ) == '0\x80\x05\x00\x02\x01\x01\x00\x00'
+            ) == '0\200\005\000\002\001\001\000\000'
 
     def testWithDefaultedDefModeChunked(self):
         self.__initWithDefaulted()
         assert encoder.encode(
             self.s, defMode=1, maxChunkSize=4
-            ) == '0\x05\x05\x00\x02\x01\x01'
+            ) == '0\005\005\000\002\001\001'
 
     def testWithDefaultedIndefModeChunked(self):
         self.__initWithDefaulted()
         assert encoder.encode(
             self.s, defMode=0, maxChunkSize=4
-            ) == '0\x80\x05\x00\x02\x01\x01\x00\x00'
+            ) == '0\200\005\000\002\001\001\000\000'
 
     def testWithOptionalAndDefaultedDefMode(self):
         self.__initWithOptionalAndDefaulted()
-        assert encoder.encode(self.s) == '0\x12\x05\x00\x04\x0bquick brown\x02\x01\x01'
+        assert encoder.encode(self.s) == '0\022\005\000\004\013quick brown\002\001\001'
         
     def testWithOptionalAndDefaultedIndefMode(self):
         self.__initWithOptionalAndDefaulted()
         assert encoder.encode(
             self.s, defMode=0
-            ) == '0\x80\x05\x00\x04\x0bquick brown\x02\x01\x01\x00\x00'
+            ) == '0\200\005\000\004\013quick brown\002\001\001\000\000'
 
     def testWithOptionalAndDefaultedDefModeChunked(self):
         self.__initWithOptionalAndDefaulted()
         assert encoder.encode(
             self.s, defMode=1, maxChunkSize=4
-            ) == '0\x18\x05\x00$\x11\x04\x04quic\x04\x04k br\x04\x03own\x02\x01\x01'
+            ) == '0\030\005\000$\021\004\004quic\004\004k br\004\003own\002\001\001'
 
     def testWithOptionalAndDefaultedIndefModeChunked(self):
         self.__initWithOptionalAndDefaulted()
         assert encoder.encode(
             self.s, defMode=0, maxChunkSize=4
-            ) == '0\x80\x05\x00$\x80\x04\x04quic\x04\x04k br\x04\x03own\x00\x00\x02\x01\x01\x00\x00'
+            ) == '0\200\005\000$\200\004\004quic\004\004k br\004\003own\000\000\002\001\001\000\000'
 
 class ChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -232,6 +232,6 @@ class ChoiceEncoderTestCase(unittest.TestCase):
         
     def testFilled(self):
         self.s.setComponentByPosition(0, univ.Null(''))
-        assert encoder.encode(self.s) == '\x05\x00'
+        assert encoder.encode(self.s) == '\005\000'
 
 if __name__ == '__main__': unittest.main()

@@ -10,30 +10,30 @@ except ImportError:
 
 class BooleanEncoderTestCase(unittest.TestCase):
     def testTrue(self):
-        assert encoder.encode(univ.Boolean(1)) == '\x01\x01\xff'
+        assert encoder.encode(univ.Boolean(1)) == '\001\001\377'
     def testFalse(self):
-        assert encoder.encode(univ.Boolean(0)) == '\x01\x01\x00'
+        assert encoder.encode(univ.Boolean(0)) == '\001\001\000'
 
 class BitStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.BitString((1,0)*501)
-            ) == '\x03\x7f\x06' + '\xaa' * 125 + '\x80'
+            ) == '\003\177\006' + '\252' * 125 + '\200'
 
     def testLongMode(self):
         assert encoder.encode(
             univ.BitString((1,0)*501)
-            ) == '\x03\x7f\x06' + '\xaa' * 125 + '\x80'
+            ) == '\003\177\006' + '\252' * 125 + '\200'
         
 class OctetStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.OctetString('Quick brown fox')
-            ) == '\x04\x0fQuick brown fox'
+            ) == '\004\017Quick brown fox'
     def testLongMode(self):
         assert encoder.encode(
             univ.OctetString('Q'*1001)
-            ) == '$\x80\x04\x82\x03\xe8' + 'Q'*1000 + '\x04\x01Q\x00\x00'
+            ) == '$\200\004\202\003\350' + 'Q'*1000 + '\004\001Q\000\000'
         
 class SetEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -64,25 +64,25 @@ class SetEncoderTestCase(unittest.TestCase):
         
     def testIndefMode(self):
         self.__init()
-        assert encoder.encode(self.s) == '1\x80\x05\x00\x00\x00'
+        assert encoder.encode(self.s) == '1\200\005\000\000\000'
 
     def testWithOptionalIndefMode(self):
         self.__initWithOptional()
         assert encoder.encode(
             self.s
-            ) == '1\x80\x04\x0bquick brown\x05\x00\x00\x00'
+            ) == '1\200\004\013quick brown\005\000\000\000'
 
     def testWithDefaultedIndefMode(self):
         self.__initWithDefaulted()
         assert encoder.encode(
             self.s
-            ) == '1\x80\x02\x01\x01\x05\x00\x00\x00'
+            ) == '1\200\002\001\001\005\000\000\000'
 
     def testWithOptionalAndDefaultedIndefMode(self):
         self.__initWithOptionalAndDefaulted()
         assert encoder.encode(
             self.s
-            ) == '1\x80\x02\x01\x01\x04\x0bquick brown\x05\x00\x00\x00'
+            ) == '1\200\002\001\001\004\013quick brown\005\000\000\000'
 
 class SetWithChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -98,6 +98,6 @@ class SetWithChoiceEncoderTestCase(unittest.TestCase):
         self.s.setComponentByPosition(0)
         self.s.setComponentByName('status')
         self.s.getComponentByName('status').setComponentByPosition(0, 1)
-        assert encoder.encode(self.s) == '1\x80\x01\x01\xff\x05\x00\x00\x00'
+        assert encoder.encode(self.s) == '1\200\001\001\377\005\000\000\000'
 
 if __name__ == '__main__': unittest.main()
