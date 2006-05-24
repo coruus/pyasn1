@@ -12,13 +12,13 @@ class OctetStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.OctetString('Quick brown fox')
-            ) == '\x04\x0fQuick brown fox'
+            ) == '\004\017Quick brown fox'
 
 class BitStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.BitString((1,))
-            ) == '\x03\x02\x07\x80'
+            ) == '\003\002\007\200'
         
 class SetWithChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -35,6 +35,6 @@ class SetWithChoiceEncoderTestCase(unittest.TestCase):
         self.s.setComponentByPosition(0)
         self.s.setComponentByName('status')
         self.s.getComponentByName('status').setComponentByPosition(0, 'ann')
-        assert encoder.encode(self.s) == '1\x07\x04\x03ann\x05\x00'
+        assert encoder.encode(self.s) == '1\007\004\003ann\005\000'
 
 if __name__ == '__main__': unittest.main()
