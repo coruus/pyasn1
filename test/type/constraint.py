@@ -171,18 +171,39 @@ class InnerTypeConstraintTestCase(unittest.TestCase):
         else:
             assert 0, 'constraint check fails'            
 
-# Booleans
+# Constraints compositions
+
+class ConstraintsIntersectionTestCase(unittest.TestCase):
+    def setUp(self):
+        self.c1 = constraint.ConstraintsIntersection(
+            constraint.ValueRangeConstraint(1, 9),
+            constraint.ValueRangeConstraint(2, 5)
+            )
+
+    def testGoodVal(self):
+        try:
+            self.c1(3)
+        except error.ValueConstraintError:
+            assert 0, 'constraint check fails'
+    def testBadVal(self):
+        try:
+            self.c1(0)
+        except error.ValueConstraintError:
+            pass
+        else:
+            assert 0, 'constraint check fails'
 
 class ConstraintsUnionTestCase(unittest.TestCase):
     def setUp(self):
         self.c1 = constraint.ConstraintsUnion(
-            constraint.SingleValueConstraint(4),
-            constraint.ValueRangeConstraint(2, 4)
+            constraint.SingleValueConstraint(5),
+            constraint.ValueRangeConstraint(1, 3)
             )
 
     def testGoodVal(self):
         try:
             self.c1(2)
+            self.c1(5)
         except error.ValueConstraintError:
             assert 0, 'constraint check fails'
     def testBadVal(self):
@@ -211,7 +232,42 @@ class ConstraintsExclusionTestCase(unittest.TestCase):
             pass
         else:
             assert 0, 'constraint check fails'
-    
+
+# Constraints derivations
+
+class DirectDerivationTestCase(unittest.TestCase):
+    def setUp(self):
+        self.c1 = constraint.SingleValueConstraint(5)
+        self.c2 = constraint.ConstraintsUnion(
+            self.c1, constraint.ValueRangeConstraint(1, 3)
+            )
+
+    def testGoodVal(self):
+        assert self.c1.isSuperTypeOf(self.c2), 'isSuperTypeOf failed'
+        assert not self.c1.isSubTypeOf(self.c2) , 'isSubTypeOf failed'
+    def testBadVal(self):
+        assert not self.c2.isSuperTypeOf(self.c1) , 'isSuperTypeOf failed'
+        assert self.c2.isSubTypeOf(self.c1) , 'isSubTypeOf failed'
+
+class IndirectDerivationTestCase(unittest.TestCase):
+    def setUp(self):
+        self.c1 = constraint.ConstraintsIntersection(
+            constraint.ValueRangeConstraint(1, 30)
+            )
+        self.c2 = constraint.ConstraintsIntersection(
+            self.c1, constraint.ValueRangeConstraint(1, 20)
+            )
+        self.c2 = constraint.ConstraintsIntersection(
+            self.c2, constraint.ValueRangeConstraint(1, 10)
+            )
+
+    def testGoodVal(self):
+        assert self.c1.isSuperTypeOf(self.c2), 'isSuperTypeOf failed'
+        assert not self.c1.isSubTypeOf(self.c2) , 'isSubTypeOf failed'
+    def testBadVal(self):
+        assert not self.c2.isSuperTypeOf(self.c1) , 'isSuperTypeOf failed'
+        assert self.c2.isSubTypeOf(self.c1) , 'isSubTypeOf failed'
+        
 if __name__ == '__main__': unittest.main()
 
 # how to apply size constriants to constructed types?
