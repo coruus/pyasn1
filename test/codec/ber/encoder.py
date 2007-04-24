@@ -8,6 +8,15 @@ except ImportError:
         'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
         )
 
+class LargeTagEncoderTestCase(unittest.TestCase):
+    def setUp(self):
+        self.o = univ.Integer().subtype(
+            value=1, explicitTag=tag.Tag(tag.tagClassApplication, tag.tagFormatSimple, 0xdeadbeaf)
+            )
+    def testEncoder(self):
+        print repr(encoder.encode(self.o))
+        assert encoder.encode(self.o) == '\177\215\365\266\375\057\003\002\001\001'
+        
 class IntegerEncoderTestCase(unittest.TestCase):
     def testPosInt(self):
         assert encoder.encode(univ.Integer(12)) == '\002\001\014'
