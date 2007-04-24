@@ -8,6 +8,10 @@ except ImportError:
         'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
         )
 
+class LargeTagDecoderTestCase(unittest.TestCase):
+    def testLargeTag(self):
+        assert decoder.decode('\177\215\365\266\375\057\003\002\001\001') == (1, '')
+
 class IntegerDecoderTestCase(unittest.TestCase):
     def testPosInt(self):
         assert decoder.decode('\002\001\014') == (12, '')
