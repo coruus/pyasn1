@@ -14,7 +14,6 @@ class LargeTagEncoderTestCase(unittest.TestCase):
             value=1, explicitTag=tag.Tag(tag.tagClassApplication, tag.tagFormatSimple, 0xdeadbeaf)
             )
     def testEncoder(self):
-        print repr(encoder.encode(self.o))
         assert encoder.encode(self.o) == '\177\215\365\266\375\057\003\002\001\001'
         
 class IntegerEncoderTestCase(unittest.TestCase):
