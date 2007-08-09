@@ -242,4 +242,11 @@ class ChoiceEncoderTestCase(unittest.TestCase):
         self.s.setComponentByPosition(0, univ.Null(''))
         assert encoder.encode(self.s) == '\005\000'
 
+    def testTagged(self):
+        s = self.s.subtype(
+            explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatSimple, 4)
+            )
+        s.setComponentByPosition(0, univ.Null(''))
+        assert encoder.encode(s) == '\244\002\005\000'
+
 if __name__ == '__main__': unittest.main()
