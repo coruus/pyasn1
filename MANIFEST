@@ -1,6 +1,7 @@
 CHANGES
 MANIFEST
 README
+THANKS
 LICENSE
 doc/notes.html
 pyasn1/v1/__init__.py
