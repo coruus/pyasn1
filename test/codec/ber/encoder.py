@@ -57,6 +57,8 @@ class BitStringEncoderTestCase(unittest.TestCase):
         assert encoder.encode(
             self.b, defMode=0, maxChunkSize=1
             ) == '#\200\003\002\000\251\003\002\001\212\000\000'
+    def testEmptyValue(self):
+        assert encoder.encode(univ.BitString(())) == '\003\001\000'
         
 class OctetStringEncoderTestCase(unittest.TestCase):
     def setUp(self):
