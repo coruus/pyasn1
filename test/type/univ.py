@@ -372,6 +372,9 @@ class Choice(unittest.TestCase):
     def testGetComponent(self):
         self.s1.setComponentByType(univ.OctetString.tagSet, 'abc')
         assert self.s1.getComponent() == 'abc', 'getComponent() fails'
+    def testGetName(self):
+        self.s1.setComponentByType(univ.OctetString.tagSet, 'abc')
+        assert self.s1.getName() == 'name', 'getName() fails'
     def testSetComponentByPosition(self):
         self.s1.setComponentByPosition(0, univ.OctetString('Jim'))
         assert self.s1 == 'Jim'
