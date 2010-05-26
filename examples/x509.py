@@ -1,6 +1,6 @@
 # Read ASN.1/PEM X.509 certificates on stdin, parse each into plain text,
 # then build substrate from it
-import sys, string, base64
+import string, base64
 from pyasn1.type import tag,namedtype,namedval,univ,constraint,char,useful
 from pyasn1.codec.der import decoder, encoder
 from pyasn1 import error
@@ -110,38 +110,49 @@ class Certificate(univ.Sequence):
 
 # end of ASN.1 data structures
 
-certType = Certificate()
-
-# Read PEM certs from stdin and print them out in plain text
-
 stSpam, stHam, stDump = 0, 1, 2
-state = stSpam
-certCnt = 0
 
-for certLine in sys.stdin.readlines():
-    certLine = string.strip(certLine)
-    if state == stSpam:
+def readPemFromFile(fileObj):
+    state = stSpam
+    while 1:
+        certLine = fileObj.readline()
+        if not certLine:
+            break
+        certLine = string.strip(certLine)
         if state == stSpam:
             if certLine == '-----BEGIN CERTIFICATE-----':
                 certLines = []
                 state = stHam
                 continue
-    if state == stHam:
-        if certLine == '-----END CERTIFICATE-----':
-            state = stDump
-        else:
-            certLines.append(certLine)
-    if state == stDump:
-        substrate = ''
-        for certLine in certLines:
-            substrate = substrate + base64.b64decode(certLine)
+        if state == stHam:
+            if certLine == '-----END CERTIFICATE-----':
+                state = stDump
+            else:
+                certLines.append(certLine)
+        if state == stDump:
+            substrate = ''
+            for certLine in certLines:
+                substrate = substrate + base64.b64decode(certLine)
+            return substrate
 
+# Read PEM certs from stdin and print them out in plain text
+if __name__ == '__main__':
+    import sys
+    
+    certType = Certificate()
+
+    certCnt = 0
+
+    while 1:
+        substrate = readPemFromFile(sys.stdin)
+        if not substrate:
+            break
+        
         cert = decoder.decode(substrate, asn1Spec=certType)[0]
         print cert.prettyPrint()
         
         assert encoder.encode(cert) == substrate, 'cert recode fails'
         
         certCnt = certCnt + 1
-        state = stSpam
 
-print '*** %s PEM cert(s) de/serialized' % certCnt
+        print '*** %s PEM cert(s) de/serialized' % certCnt
