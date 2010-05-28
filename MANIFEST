@@ -49,6 +49,7 @@ test/type/tag.py
 test/type/constraint.py
 test/type/namedtype.py
 examples/x509.py
+examples/ocsp.py
 examples/snmp.py
 examples/sshkey.py
 TODO
