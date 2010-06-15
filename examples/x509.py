@@ -1,5 +1,12 @@
-# Read ASN.1/PEM X.509 certificates on stdin, parse each into plain text,
-# then build substrate from it
+#
+# X.509 message syntax
+#
+# ASN.1 source from:
+# http://www.trl.ibm.com/projects/xml/xss4j/data/asn1/grammars/x509.asn
+#
+# Sample captures from:
+# http://wiki.wireshark.org/SampleCaptures/
+#
 import string, base64
 from pyasn1.type import tag,namedtype,namedval,univ,constraint,char,useful
 from pyasn1.codec.der import decoder, encoder
@@ -135,7 +142,8 @@ def readPemFromFile(fileObj):
                 substrate = substrate + base64.b64decode(certLine)
             return substrate
 
-# Read PEM certs from stdin and print them out in plain text
+# Read ASN.1/PEM X.509 certificates on stdin, parse each into plain text,
+# then build substrate from it
 if __name__ == '__main__':
     import sys
     
