@@ -268,10 +268,8 @@ if __name__ == '__main__':
     import urllib2
     
     if len(sys.argv) != 2:
-        print """
-Usage:
-  cat CACertificate.pem userCertificate.pem | %s <ocsp-responder-url>
-""" % sys.argv[0]
+        print """Usage:
+$ cat CACertificate.pem userCertificate.pem | %s <ocsp-responder-url>""" % sys.argv[0]
         sys.exit(-1)
     else:
         ocspUrl = sys.argv[1]

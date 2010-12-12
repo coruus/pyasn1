@@ -54,6 +54,12 @@ keyMagic = {
 
 # Read PEM keys from stdin and print them out in plain text
 
+if len(sys.argv) != 1:
+    print """Usage:
+$ openssl genrsa -out /tmp/myprivatekey.pem
+$ cat /tmp/myprivatekey.pem | %s""" % sys.argv[0]
+    sys.exit(-1)
+                                
 stSpam, stHam, stDump = 0, 1, 2
 state = stSpam
 keyCnt = 0
