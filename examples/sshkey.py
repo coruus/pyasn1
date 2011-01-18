@@ -68,13 +68,13 @@ for keyLine in sys.stdin.readlines():
     keyLine = string.strip(keyLine)
     if state == stSpam:
         if state == stSpam:
-            if keyMagic.has_key(keyLine):
+            if keyLine in keyMagic:
                 keyMagicTail = keyMagic[keyLine]
                 keyLines = []
                 state = stHam
                 continue
     if state == stHam:
-        if keyMagicTail.has_key(keyLine):
+        if keyLine in keyMagicTail:
             asn1Spec = keyMagicTail[keyLine]
             state = stDump
         else:
