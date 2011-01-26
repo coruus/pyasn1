@@ -301,4 +301,21 @@ class ChoiceDecoderTestCase(unittest.TestCase):
         assert decoder.decode('\005\000') == (self.s, '')
         assert decoder.decode('\005\000') == (univ.Null(''), '')
 
+class AnyDecoderTestCase(unittest.TestCase):
+    def setUp(self):
+        self.s = univ.Any()
+
+    def testByUntagged(self):
+        assert decoder.decode(
+            '\004\003fox', asn1Spec=self.s
+            ) == (univ.Any('\004\003fox'), '')
+            
+    def testTaggedEx(self):
+        s = univ.Any('\004\003fox').subtype(explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatSimple, 4))
+        assert decoder.decode('\244\005\004\003fox', asn1Spec=s) == (s, '')
+                
+    def testTaggedIm(self):
+        s = univ.Any('\004\003fox').subtype(implicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatSimple, 4))
+        assert decoder.decode('\204\005\004\003fox', asn1Spec=s) == (s, '')
+                    
 if __name__ == '__main__': unittest.main()

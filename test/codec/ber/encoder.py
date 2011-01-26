@@ -251,4 +251,23 @@ class ChoiceEncoderTestCase(unittest.TestCase):
         s.setComponentByPosition(0, univ.Null(''))
         assert encoder.encode(s) == '\244\002\005\000'
 
+class AnyEncoderTestCase(unittest.TestCase):
+    def setUp(self):
+        self.s = univ.Any(encoder.encode(univ.OctetString('fox')))
+        
+    def testUntagged(self):
+        assert encoder.encode(self.s) == '\004\003fox'
+            
+    def testTaggedEx(self):
+        s = self.s.subtype(
+            explicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatSimple, 4)
+            )
+        assert encoder.encode(s) == '\244\005\004\003fox'
+
+    def testTaggedIm(self):
+        s = self.s.subtype(
+            implicitTag=tag.Tag(tag.tagClassContext, tag.tagFormatSimple, 4)
+            )
+        assert encoder.encode(s) == '\204\005\004\003fox'
+                    
 if __name__ == '__main__': unittest.main()
