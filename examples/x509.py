@@ -119,7 +119,8 @@ class Certificate(univ.Sequence):
 
 stSpam, stHam, stDump = 0, 1, 2
 
-def readPemFromFile(fileObj):
+def readPemFromFile(fileObj, startMarker='-----BEGIN CERTIFICATE-----',
+                    endMarker='-----END CERTIFICATE-----'):
     state = stSpam
     while 1:
         certLine = fileObj.readline()
@@ -127,12 +128,12 @@ def readPemFromFile(fileObj):
             break
         certLine = string.strip(certLine)
         if state == stSpam:
-            if certLine == '-----BEGIN CERTIFICATE-----':
+            if certLine == startMarker:
                 certLines = []
                 state = stHam
                 continue
         if state == stHam:
-            if certLine == '-----END CERTIFICATE-----':
+            if certLine == endMarker:
                 state = stDump
             else:
                 certLines.append(certLine)
