@@ -27,7 +27,7 @@ class DirectoryString(univ.Choice):
         namedtype.NamedType('ia5String', char.IA5String().subtype(subtypeSpec=constraint.ValueSizeConstraint(1, MAX))) # hm, this should not be here!? XXX
         )
 
-class AttributeValue(DirectoryString): pass
+class AttributeValue(univ.Any): pass
 
 class AttributeType(univ.ObjectIdentifier): pass
 
@@ -51,16 +51,14 @@ class Name(univ.Choice):
 class AlgorithmIdentifier(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('algorithm', univ.ObjectIdentifier()),
-        namedtype.OptionalNamedType('parameters', univ.Null())
-        # XXX syntax screwed?
-#        namedtype.OptionalNamedType('parameters', univ.ObjectIdentifier())
+        namedtype.OptionalNamedType('parameters', univ.Any())
         )
 
 class Extension(univ.Sequence):
     componentType = namedtype.NamedTypes(
         namedtype.NamedType('extnID', univ.ObjectIdentifier()),
         namedtype.DefaultedNamedType('critical', univ.Boolean('False')),
-        namedtype.NamedType('extnValue', univ.OctetString())
+        namedtype.NamedType('extnValue', univ.Any())
         )
 
 class Extensions(univ.SequenceOf):
@@ -163,10 +161,15 @@ $ cat userCertificate.pem | %s""" % (sys.argv[0], sys.argv[0])
         if not substrate:
             break
         
-        cert = decoder.decode(substrate, asn1Spec=certType)[0]
-        print cert.prettyPrint()
+        cert, rest = decoder.decode(substrate, asn1Spec=certType)
+
+        if rest: substrate = substrate[:-len(rest)]
         
-        assert encoder.encode(cert) == substrate, 'cert recode fails'
+        print cert.prettyPrint()
+
+        assert encoder.encode(cert, defMode=False) == substrate or \
+               encoder.encode(cert, defMode=True) == substrate, \
+               'cert recode fails'
         
         certCnt = certCnt + 1
 
