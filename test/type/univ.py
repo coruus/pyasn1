@@ -207,8 +207,8 @@ class SequenceOf(unittest.TestCase):
             pass
         else:
             assert 0, 'size spec fails'
-    def testGetComponentTypeMap(self):
-        assert self.s1.getComponentTypeMap() == {
+    def testGetComponentTagMap(self):
+        assert self.s1.getComponentTagMap().getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString('')
             }
     def testSubtype(self):
@@ -247,7 +247,7 @@ class Sequence(unittest.TestCase):
         self.s1.setComponentByName('name', univ.OctetString('abc'))
         assert self.s1.getComponentByName('name') == 'abc', 'set by name fails'
     def testGetNearPosition(self):
-        assert self.s1.getComponentTypeMapNearPosition(1) == {
+        assert self.s1.getComponentTagMapNearPosition(1).getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString(''),
             univ.Integer.tagSet: univ.Integer(34)
             }
@@ -315,12 +315,12 @@ class Set(unittest.TestCase):
         assert self.s1.getComponentByType(
             univ.OctetString.tagSet
             ) == 'abc', 'set by name fails'
-    def testGetTypeMap(self):
-        assert self.s1.getTypeMap() == {
+    def testGetTagMap(self):
+        assert self.s1.getTagMap().getPosMap() == {
             univ.Set.tagSet: univ.Set()
             }
-    def testGetComponentTypeMap(self):
-        assert self.s1.getComponentTypeMap() == {
+    def testGetComponentTagMap(self):
+        assert self.s1.getComponentTagMap().getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString(''),
             univ.Null.tagSet: univ.Null(''),
             univ.Integer.tagSet: univ.Integer(34)

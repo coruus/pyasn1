@@ -40,26 +40,26 @@ class NamedTypesCaseBase(unittest.TestCase):
                'getPositionByName() fails'
 
     def testGetTypesNearPosition(self):
-        assert self.e.getTypeMapNearPosition(0) == {
+        assert self.e.getTagMapNearPosition(0).getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString('')
             }
-        assert self.e.getTypeMapNearPosition(1) == {
+        assert self.e.getTagMapNearPosition(1).getPosMap() == {
             univ.Integer.tagSet: univ.Integer(0),
             univ.OctetString.tagSet: univ.OctetString('')
             }
-        assert self.e.getTypeMapNearPosition(2) == {
+        assert self.e.getTagMapNearPosition(2).getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString('')
             }
 
-    def testGetTypeMap(self):
-        assert self.e.getTypeMap() == {
+    def testGetTagMap(self):
+        assert self.e.getTagMap().getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString(''),
             univ.Integer.tagSet: univ.Integer(0)
             }
 
-    def testGetTypeMapWithDups(self):
+    def testGetTagMapWithDups(self):
         try:
-            self.e.getTypeMap(1)
+            self.e.getTagMap(1)
         except PyAsn1Error:
             pass
         else:
