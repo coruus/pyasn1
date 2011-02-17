@@ -204,52 +204,48 @@ class SignedData(univ.Sequence):
         
 class Data(univ.OctetString): pass
 
-# Read S/MIME message on stdin, parse and pretty-print PKCS#7 parts
+# Read ASN.1/PEM PKCS#7 on stdin, parse each into plain text,
+# then build substrate from it
 if __name__ == '__main__':
     import sys
     import base64
-    from email.parser import Parser
     from pyasn1.codec.der import decoder
+    
+    if len(sys.argv) != 1:
+        print """Usage:
+$ cat pkcs7Certificate.pem | %s""" % (sys.argv[0],)
+        sys.exit(-1)
+    
+    substrate = readPemFromFile(
+        sys.stdin, '-----BEGIN PKCS7-----', '-----END PKCS7-----'
+        )
 
-#    smimeTypeMap = {
-#        'enveloped-data': EnvelopedData,
-#        'signed-data': SignedData
-#        }
+    assert substrate, 'bad PKCS7 data on input'
+        
+    contentInfo, rest = decoder.decode(substrate, asn1Spec=ContentInfo())
+
+    if rest: substrate = substrate[:-len(rest)]
+    
+    print contentInfo.prettyPrint()
+
+    assert encoder.encode(contentInfo, defMode=False) == substrate or \
+           encoder.encode(contentInfo, defMode=True) == substrate, \
+           're-encode fails'
+
+    contentType = contentInfo.getComponentByName('contentType')
+
     contentInfoMap = {
-        data: Data,
-        signedData: SignedData,
-        envelopedData: EnvelopedData,
-        signedAndEnvelopedData: SignedAndEnvelopedData,
-        digestedData: DigestedData,
-        encryptedData: EncryptedData
+        (1, 2, 840, 113549, 1, 7, 1): Data(),
+        (1, 2, 840, 113549, 1, 7, 2): SignedData(),
+        (1, 2, 840, 113549, 1, 7, 3): EnvelopedData(),
+        (1, 2, 840, 113549, 1, 7, 4): SignedAndEnvelopedData(),
+        (1, 2, 840, 113549, 1, 7, 5): DigestedData(),
+        (1, 2, 840, 113549, 1, 7, 6): EncryptedData()
         }
 
-    parser = Parser()
-    msg = parser.parse(sys.stdin)
+    content, _ = decoder.decode(
+        contentInfo.getComponentByName('content'),
+        asn1Spec=contentInfoMap[contentType]
+        )
 
-    for part in msg.walk():
-        if part.get_param('application/pkcs7-mime') is not None or \
-               part.get_param('application/x-pkcs7-mime') is not None:
-#            asn1Spec = smimeTypeMap.get(part.get_param('smime-type'))
-
-            substrate = ''
-            for line in part.get_payload().split():
-                substrate = substrate + line.strip()
-                
-            substrate = base64.b64decode(substrate)
-
-            contentInfo, _ = decoder.decode(
-                substrate, asn1Spec=ContentInfo()
-                )
-            asn1Spec = contentInfoMap.get(
-                contentInfo.getComponentByName('contentType')
-                )
-            if asn1Spec:
-                t, _ = decoder.decode(
-                    contentInfo.getComponentByName('content'),
-                    asn1Spec=asn1Spec()
-                    )
-                
-                print 'S/MIME part ', part.get_content_type(), ', type ', part.get_param('smime-type')
-                print t.prettyPrint()
-
+    print content.prettyPrint()

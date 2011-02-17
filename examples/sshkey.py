@@ -89,12 +89,13 @@ for keyLine in sys.stdin.readlines():
             state = stSpam
             continue
 
-        key = decoder.decode(substrate, asn1Spec=asn1Spec)[0]
+        key, rest = decoder.decode(substrate, asn1Spec=asn1Spec)
+
+        if rest: substrate = substrate[:-len(rest)]
         
         print key.prettyPrint()
         
-        if encoder.encode(key) != substrate:
-            print 'key re-code yields a diff!'
+        assert encoder.encode(key) == substrate, 'key re-code fails'
         
         keyCnt = keyCnt + 1
         state = stSpam
