@@ -169,7 +169,7 @@ class SequenceOf(unittest.TestCase):
     def testSeq(self):
         self.s1.setComponentByPosition(0, univ.OctetString('abc'))
         assert self.s1[0] == 'abc', 'set by idx fails'
-        self.s1.setComponentByPosition(0, 'cba')
+        self.s1[0] = 'cba'
         assert self.s1[0] == 'cba', 'set by idx fails'
     def testCmp(self):
         self.s1.clear()
@@ -246,6 +246,9 @@ class Sequence(unittest.TestCase):
     def testById(self):
         self.s1.setComponentByName('name', univ.OctetString('abc'))
         assert self.s1.getComponentByName('name') == 'abc', 'set by name fails'
+    def testByKey(self):
+        self.s1['name'] = 'abc'
+        assert self.s1['name'] == 'abc', 'set by key fails'
     def testGetNearPosition(self):
         assert self.s1.getComponentTagMapNearPosition(1).getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString(''),
