@@ -131,6 +131,31 @@ class Null(unittest.TestCase):
         else:
             assert 0, 'constraint fail'
 
+class RealTestCase(unittest.TestCase):
+    def testStr(self): assert str(univ.Real(1.0)) == '1.0','str() fails'
+    def testRepr(self): assert repr(univ.Real(-4.1)) == 'Real((-41L, 10, -1))','repr() fails'
+    def testAdd(self): assert univ.Real(-4.1) + 1.4 == -2.7, '__add__() fails'
+    def testRadd(self): assert 4 + univ.Real(0.5) == 4.5, '__radd__() fails'
+    def testSub(self): assert univ.Real(3.9) - 1.7 == 2.2, '__sub__() fails'
+    def testRsub(self): assert 6.1 - univ.Real(0.1) == 6, '__rsub__() fails'
+    def testMul(self): assert univ.Real(3.0) * -3 == -9, '__mul__() fails'
+    def testRmul(self): assert 2 * univ.Real(3.0) == 6, '__rmul__() fails'
+    def testDiv(self): assert univ.Real(3.0) / 2 == 1.5, '__div__() fails'
+    def testRdiv(self): assert 6 / univ.Real(3.0) == 2, '__rdiv__() fails'
+    def testMod(self): assert univ.Real(3.0) % 2 == 1, '__mod__() fails'
+    def testRmod(self): assert 4 % univ.Real(3.0) == 1, '__rmod__() fails'
+    def testPow(self): assert univ.Real(3.0) ** 2 == 9, '__pow__() fails'
+    def testRpow(self): assert 2 ** univ.Real(2.0) == 4, '__rpow__() fails'
+    def testInt(self): assert int(univ.Real(3.0)) == 3, '__int__() fails'
+    def testLong(self): assert int(univ.Real(8.0)) == 8, '__long__() fails'
+    def testFloat(self): assert float(univ.Real(4.0))==4.0,'__float__() fails'
+    def testPrettyIn(self): assert univ.Real((3,10,0)) == 3, 'prettyIn() fails'
+    def testTag(self):
+        assert univ.Real().getTagSet() == tag.TagSet(
+            (),
+            tag.Tag(tag.tagClassUniversal, tag.tagFormatSimple, 0x09)
+            )
+
 class ObjectIdentifier(unittest.TestCase):
     def testStr(self):
         assert str(univ.ObjectIdentifier((1,3,6))) == '(1, 3, 6)'
