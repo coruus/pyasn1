@@ -98,17 +98,19 @@ class ExpTaggedOctetStringDecoderTestCase(unittest.TestCase):
             'e\021\004\017Quick brown fox'
             )[0])
     def testIndefMode(self):
-        assert self.o.isSameTypeWith(decoder.decode(
-            'e\200$\200\004\017Quick brown fox\000\000\000\000'
-            )[0])
+        v, s = decoder.decode('e\200$\200\004\017Quick brown fox\000\000\000\000')
+        assert self.o.isSameTypeWith(v)
+        assert not s
+
     def testDefModeChunked(self):
-        assert self.o.isSameTypeWith(decoder.decode(
-            'e\031$\027\004\004Quic\004\004k br\004\004own \004\003fox'
-            )[0])
+        v, s = decoder.decode('e\031$\027\004\004Quic\004\004k br\004\004own \004\003fox')
+        assert self.o.isSameTypeWith(v)
+        assert not s
+
     def testIndefModeChunked(self):
-        assert self.o.isSameTypeWith(decoder.decode(
-            'e\200$\200\004\004Quic\004\004k br\004\004own \004\003fox\000\000\000\000'
-            )[0])
+        v, s = decoder.decode('e\200$\200\004\004Quic\004\004k br\004\004own \004\003fox\000\000\000\000')
+        assert self.o.isSameTypeWith(v)
+        assert not s
 
 class NullDecoderTestCase(unittest.TestCase):
     def testNull(self):
