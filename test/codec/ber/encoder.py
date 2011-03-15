@@ -109,6 +109,20 @@ class ObjectIdentifierEncoderTestCase(unittest.TestCase):
             univ.ObjectIdentifier((1,3,6,0,0xffffe))
             ) == '\006\006+\006\000\277\377~'
 
+class RealEncoderTestCase(unittest.TestCase):
+    def testChar(self):
+        assert encoder.encode(
+            univ.Real((123, 10, 11))
+            ) == '\t\x07\x03123E11'
+    def testBin(self):
+        assert encoder.encode(
+            univ.Real((1101, 2, 11))
+            ) == '\t\x04\x80\x0b\x04M'
+    def testPlusInf(self):
+        assert encoder.encode(univ.Real('inf')) == '\t\x01@'
+    def testMinusInf(self):
+        assert encoder.encode(univ.Real('-inf')) == '\t\x01A'
+        
 class SequenceEncoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Sequence(componentType=namedtype.NamedTypes(
