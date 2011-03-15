@@ -150,6 +150,39 @@ class RealTestCase(unittest.TestCase):
     def testLong(self): assert int(univ.Real(8.0)) == 8, '__long__() fails'
     def testFloat(self): assert float(univ.Real(4.0))==4.0,'__float__() fails'
     def testPrettyIn(self): assert univ.Real((3,10,0)) == 3, 'prettyIn() fails'
+    # infinite float values
+    def testStrInf(self):
+        assert str(univ.Real('inf')) == 'inf','str() fails'
+    def testReprInf(self):
+        assert repr(univ.Real('inf')) == 'Real(\'inf\')','repr() fails'
+    def testAddInf(self):
+        assert univ.Real('inf') + 1 == float('inf'), '__add__() fails'
+    def testRaddInf(self):
+        assert 1 + univ.Real('inf') == float('inf'), '__radd__() fails'
+    def testIntInf(self):
+        try:
+            assert int(univ.Real('inf'))
+        except OverflowError:
+            pass
+        else:
+            assert 0, '__int__() fails'
+    def testLongInf(self):
+        try:
+            assert int(univ.Real('inf'))
+        except OverflowError:
+            pass
+        else:
+            assert 0, '__long__() fails'        
+        assert int(univ.Real(8.0)) == 8, '__long__() fails'
+    def testFloatInf(self):
+        assert float(univ.Real('-inf')) == float('-inf'),'__float__() fails'
+    def testPrettyInInf(self):
+        assert univ.Real(float('inf')) == float('inf'), 'prettyIn() fails'
+    def testPlusInf(self):
+        assert univ.Real('inf').isPlusInfinity(), 'isPlusInfinity failed'
+    def testMinusInf(self):
+        assert univ.Real('-inf').isMinusInfinity(), 'isMinusInfinity failed'
+
     def testTag(self):
         assert univ.Real().getTagSet() == tag.TagSet(
             (),
