@@ -133,7 +133,7 @@ class Null(unittest.TestCase):
 
 class RealTestCase(unittest.TestCase):
     def testStr(self): assert str(univ.Real(1.0)) == '1.0','str() fails'
-    def testRepr(self): assert repr(univ.Real(-4.1)) == 'Real((-41L, 10, -1))','repr() fails'
+    def testRepr(self): assert repr(univ.Real(-4.1)) == 'Real((-41, 10, -1))','repr() fails'
     def testAdd(self): assert univ.Real(-4.1) + 1.4 == -2.7, '__add__() fails'
     def testRadd(self): assert 4 + univ.Real(0.5) == 4.5, '__radd__() fails'
     def testSub(self): assert univ.Real(3.9) - 1.7 == 2.2, '__sub__() fails'
