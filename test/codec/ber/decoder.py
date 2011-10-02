@@ -24,11 +24,11 @@ class IntegerDecoderTestCase(unittest.TestCase):
     def testPosLong(self):
         assert decoder.decode(
             '\002\011\000\377\377\377\377\377\377\377\377'
-            ) == (0xffffffffffffffffl, '')
+            ) == (0xffffffffffffffff, '')
     def testNegLong(self):
         assert decoder.decode(
             '\002\011\377\000\000\000\000\000\000\000\001'
-            ) == (-0xffffffffffffffffl, '')
+            ) == (-0xffffffffffffffff, '')
     def testSpec(self):
         try:
             decoder.decode(

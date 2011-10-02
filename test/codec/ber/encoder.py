@@ -11,7 +11,7 @@ except ImportError:
 class LargeTagEncoderTestCase(unittest.TestCase):
     def setUp(self):
         self.o = univ.Integer().subtype(
-            value=1, explicitTag=tag.Tag(tag.tagClassApplication, tag.tagFormatSimple, 0xdeadbeafl)
+            value=1, explicitTag=tag.Tag(tag.tagClassApplication, tag.tagFormatSimple, 0xdeadbeaf)
             )
     def testEncoder(self):
         assert encoder.encode(self.o) == '\177\215\365\266\375\057\003\002\001\001'
@@ -27,11 +27,11 @@ class IntegerEncoderTestCase(unittest.TestCase):
         assert encoder.encode(univ.Integer(-1)) == '\002\001\377'
     def testPosLong(self):
         assert encoder.encode(
-            univ.Integer(0xffffffffffffffffl)
+            univ.Integer(0xffffffffffffffff)
             ) == '\002\011\000\377\377\377\377\377\377\377\377'
     def testNegLong(self):
         assert encoder.encode(
-            univ.Integer(-0xffffffffffffffffl)
+            univ.Integer(-0xffffffffffffffff)
             ) == '\002\011\377\000\000\000\000\000\000\000\001'
 
 class BooleanEncoderTestCase(unittest.TestCase):
