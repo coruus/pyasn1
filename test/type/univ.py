@@ -1,4 +1,5 @@
 from pyasn1.type import univ, tag, constraint, namedtype, namedval, error
+from pyasn1.compat.octets import str2octs
 from pyasn1.error import PyAsn1Error
 try:
     import unittest
@@ -101,15 +102,15 @@ class OctetStringTestCase(unittest.TestCase):
     def testStr(self):
         assert str(univ.OctetString('q')) == 'q', '__str__() fails'
     def testSeq(self):
-        assert univ.OctetString('q')[0] == 'q','__getitem__() fails'
+        assert univ.OctetString('q')[0] == str2octs('q')[0],'__getitem__() fails'
     def testAdd(self):
-        assert univ.OctetString('') + 'q' == 'q', '__add__() fails'
+        assert univ.OctetString('') + 'q' == str2octs('q'), '__add__() fails'
     def testRadd(self):
-        assert 'b' + univ.OctetString('q') == 'bq', '__radd__() fails'
+        assert 'b' + univ.OctetString('q') == str2octs('bq'), '__radd__() fails'
     def testMul(self):
-        assert univ.OctetString('a') * 2 == 'aa', '__mul__() fails'
+        assert univ.OctetString('a') * 2 == str2octs('aa'), '__mul__() fails'
     def testRmul(self):
-        assert 2 * univ.OctetString('b') == 'bb', '__rmul__() fails'
+        assert 2 * univ.OctetString('b') == str2octs('bb'), '__rmul__() fails'
     def testTag(self):
         assert univ.OctetString().getTagSet() == tag.TagSet(
             (),
@@ -226,9 +227,9 @@ class SequenceOf(unittest.TestCase):
             ), 'wrong tagSet'
     def testSeq(self):
         self.s1.setComponentByPosition(0, univ.OctetString('abc'))
-        assert self.s1[0] == 'abc', 'set by idx fails'
+        assert self.s1[0] == str2octs('abc'), 'set by idx fails'
         self.s1[0] = 'cba'
-        assert self.s1[0] == 'cba', 'set by idx fails'
+        assert self.s1[0] == str2octs('cba'), 'set by idx fails'
     def testCmp(self):
         self.s1.clear()
         self.s1.setComponentByPosition(0, 'abc')
@@ -237,7 +238,7 @@ class SequenceOf(unittest.TestCase):
         assert self.s1 == self.s2, '__cmp__() fails'
     def testSubtypeSpec(self):
         s = self.s1.clone(subtypeSpec=constraint.ConstraintsUnion(
-            constraint.SingleValueConstraint('abc')
+            constraint.SingleValueConstraint(str2octs('abc'))
             ))
         try:
             s.setComponentByPosition(0, univ.OctetString('abc'))
@@ -303,10 +304,10 @@ class Sequence(unittest.TestCase):
             ), 'wrong tagSet'
     def testById(self):
         self.s1.setComponentByName('name', univ.OctetString('abc'))
-        assert self.s1.getComponentByName('name') == 'abc', 'set by name fails'
+        assert self.s1.getComponentByName('name') == str2octs('abc'), 'set by name fails'
     def testByKey(self):
         self.s1['name'] = 'abc'
-        assert self.s1['name'] == 'abc', 'set by key fails'
+        assert self.s1['name'] == str2octs('abc'), 'set by key fails'
     def testGetNearPosition(self):
         assert self.s1.getComponentTagMapNearPosition(1).getPosMap() == {
             univ.OctetString.tagSet: univ.OctetString(''),
@@ -349,9 +350,9 @@ class SetOf(unittest.TestCase):
             ), 'wrong tagSet'
     def testSeq(self):
         self.s1.setComponentByPosition(0, univ.OctetString('abc'))
-        assert self.s1[0] == 'abc', 'set by idx fails'
+        assert self.s1[0] == str2octs('abc'), 'set by idx fails'
         self.s1.setComponentByPosition(0, self.s1[0].clone('cba'))
-        assert self.s1[0] == 'cba', 'set by idx fails'
+        assert self.s1[0] == str2octs('cba'), 'set by idx fails'
 
 class Set(unittest.TestCase):
     def setUp(self):
@@ -370,12 +371,12 @@ class Set(unittest.TestCase):
         self.s1.setComponentByType(univ.OctetString.tagSet, 'abc')
         assert self.s1.getComponentByType(
             univ.OctetString.tagSet
-            ) == 'abc', 'set by name fails'
+            ) == str2octs('abc'), 'set by name fails'
     def testByTypeWithInstance(self):
         self.s1.setComponentByType(univ.OctetString.tagSet, univ.OctetString('abc'))
         assert self.s1.getComponentByType(
             univ.OctetString.tagSet
-            ) == 'abc', 'set by name fails'
+            ) == str2octs('abc'), 'set by name fails'
     def testGetTagMap(self):
         assert self.s1.getTagMap().getPosMap() == {
             univ.Set.tagSet: univ.Set()
@@ -407,14 +408,14 @@ class Choice(unittest.TestCase):
         self.s1.setComponentByType(univ.OctetString.tagSet, 'abc')
         assert self.s1.getComponentByType(
             univ.OctetString.tagSet
-            ) == 'abc'
+            ) == str2octs('abc')
     def testOuterByTypeWithInstanceValue(self):
         self.s1.setComponentByType(
             univ.OctetString.tagSet, univ.OctetString('abc')
             )
         assert self.s1.getComponentByType(
             univ.OctetString.tagSet
-            ) == 'abc'
+            ) == str2octs('abc')
     def testInnerByTypeWithPythonValue(self):
         self.s1.setComponentByType(univ.Integer.tagSet, 123, 1)
         assert self.s1.getComponentByType(
@@ -429,16 +430,16 @@ class Choice(unittest.TestCase):
             ) == 123
     def testCmp(self):
         self.s1.setComponentByName('name', univ.OctetString('abc'))
-        assert self.s1 == 'abc', '__cmp__() fails'
+        assert self.s1 == str2octs('abc'), '__cmp__() fails'
     def testGetComponent(self):
         self.s1.setComponentByType(univ.OctetString.tagSet, 'abc')
-        assert self.s1.getComponent() == 'abc', 'getComponent() fails'
+        assert self.s1.getComponent() == str2octs('abc'), 'getComponent() fails'
     def testGetName(self):
         self.s1.setComponentByType(univ.OctetString.tagSet, 'abc')
         assert self.s1.getName() == 'name', 'getName() fails'
     def testSetComponentByPosition(self):
         self.s1.setComponentByPosition(0, univ.OctetString('Jim'))
-        assert self.s1 == 'Jim'
+        assert self.s1 == str2octs('Jim')
     def testClone(self):
         self.s1.setComponentByPosition(0, univ.OctetString('abc'))
         s = self.s1.clone()

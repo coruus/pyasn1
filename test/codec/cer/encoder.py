@@ -1,5 +1,6 @@
 from pyasn1.type import namedtype, univ
 from pyasn1.codec.cer import encoder
+from pyasn1.compat.octets import ints2octs
 from pyasn1.error import PyAsn1Error
 try:
     import unittest
@@ -10,30 +11,30 @@ except ImportError:
 
 class BooleanEncoderTestCase(unittest.TestCase):
     def testTrue(self):
-        assert encoder.encode(univ.Boolean(1)) == '\001\001\377'
+        assert encoder.encode(univ.Boolean(1)) == ints2octs((1, 1, 255))
     def testFalse(self):
-        assert encoder.encode(univ.Boolean(0)) == '\001\001\000'
+        assert encoder.encode(univ.Boolean(0)) == ints2octs((1, 1, 0))
 
 class BitStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.BitString((1,0)*501)
-            ) == '\003\177\006' + '\252' * 125 + '\200'
+            ) == ints2octs((3, 127, 6) + (170,) * 125 + (128,))
 
     def testLongMode(self):
         assert encoder.encode(
             univ.BitString((1,0)*501)
-            ) == '\003\177\006' + '\252' * 125 + '\200'
+            ) == ints2octs((3, 127, 6) + (170,) * 125 + (128,))
         
 class OctetStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.OctetString('Quick brown fox')
-            ) == '\004\017Quick brown fox'
+            ) == ints2octs((4, 15, 81, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120))
     def testLongMode(self):
         assert encoder.encode(
             univ.OctetString('Q'*1001)
-            ) == '$\200\004\202\003\350' + 'Q'*1000 + '\004\001Q\000\000'
+            ) == ints2octs((36, 128, 4, 130, 3, 232) + (81,)*1000 + (4, 1, 81, 0, 0))
         
 class SetEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -64,25 +65,25 @@ class SetEncoderTestCase(unittest.TestCase):
         
     def testIndefMode(self):
         self.__init()
-        assert encoder.encode(self.s) == '1\200\005\000\000\000'
+        assert encoder.encode(self.s) == ints2octs((49, 128, 5, 0, 0, 0))
 
     def testWithOptionalIndefMode(self):
         self.__initWithOptional()
         assert encoder.encode(
             self.s
-            ) == '1\200\004\013quick brown\005\000\000\000'
+            ) == ints2octs((49, 128, 4, 11, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 5, 0, 0, 0))
 
     def testWithDefaultedIndefMode(self):
         self.__initWithDefaulted()
         assert encoder.encode(
             self.s
-            ) == '1\200\002\001\001\005\000\000\000'
+            ) == ints2octs((49, 128, 2, 1, 1, 5, 0, 0, 0))
 
     def testWithOptionalAndDefaultedIndefMode(self):
         self.__initWithOptionalAndDefaulted()
         assert encoder.encode(
             self.s
-            ) == '1\200\002\001\001\004\013quick brown\005\000\000\000'
+            ) == ints2octs((49, 128, 2, 1, 1, 4, 11, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 5, 0, 0, 0))
 
 class SetWithChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -98,6 +99,6 @@ class SetWithChoiceEncoderTestCase(unittest.TestCase):
         self.s.setComponentByPosition(0)
         self.s.setComponentByName('status')
         self.s.getComponentByName('status').setComponentByPosition(0, 1)
-        assert encoder.encode(self.s) == '1\200\001\001\377\005\000\000\000'
+        assert encoder.encode(self.s) == ints2octs((49, 128, 1, 1, 255, 5, 0, 0, 0))
 
 if __name__ == '__main__': unittest.main()

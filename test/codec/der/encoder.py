@@ -1,5 +1,6 @@
 from pyasn1.type import namedtype, univ
 from pyasn1.codec.der import encoder
+from pyasn1.compat.octets import ints2octs
 from pyasn1.error import PyAsn1Error
 try:
     import unittest
@@ -12,13 +13,13 @@ class OctetStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.OctetString('Quick brown fox')
-            ) == '\004\017Quick brown fox'
+            ) == ints2octs((4, 15, 81, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 32, 102, 111, 120))
 
 class BitStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
         assert encoder.encode(
             univ.BitString((1,))
-            ) == '\003\002\007\200'
+            ) == ints2octs((3, 2, 7, 128))
         
 class SetWithChoiceEncoderTestCase(unittest.TestCase):
     def setUp(self):
@@ -35,6 +36,6 @@ class SetWithChoiceEncoderTestCase(unittest.TestCase):
         self.s.setComponentByPosition(0)
         self.s.setComponentByName('status')
         self.s.getComponentByName('status').setComponentByPosition(0, 'ann')
-        assert encoder.encode(self.s) == '1\007\004\003ann\005\000'
+        assert encoder.encode(self.s) == ints2octs((49, 7, 4, 3, 97, 110, 110, 5, 0))
 
 if __name__ == '__main__': unittest.main()
