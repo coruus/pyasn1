@@ -1,4 +1,3 @@
-import sys
 from pyasn1.type import univ, tag, constraint, namedtype, namedval, error
 from pyasn1.compat.octets import str2octs, ints2octs
 from pyasn1.error import PyAsn1Error
@@ -106,10 +105,6 @@ class OctetStringTestCase(unittest.TestCase):
         assert univ.OctetString(binValue="1000010111101110101111000000111011") == ints2octs((133, 238, 188, 14, 192)), 'bin init fails'
     def testHexStr(self):
         assert univ.OctetString(hexValue="FA9823C43E43510DE3422") == ints2octs((250, 152, 35, 196, 62, 67, 81, 13, 227, 66, 32)), 'hex init fails'
-    if sys.version_info[0] > 2:
-        def testBytes(self):
-            assert univ.OctetString(b'abcd') == b'abcd','testBytes() fails'
-
     def testStr(self):
         assert str(univ.OctetString('q')) == 'q', '__str__() fails'
     def testSeq(self):
