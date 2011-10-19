@@ -105,10 +105,17 @@ class OctetStringTestCase(unittest.TestCase):
         assert univ.OctetString(binValue="1000010111101110101111000000111011") == ints2octs((133, 238, 188, 14, 192)), 'bin init fails'
     def testHexStr(self):
         assert univ.OctetString(hexValue="FA9823C43E43510DE3422") == ints2octs((250, 152, 35, 196, 62, 67, 81, 13, 227, 66, 32)), 'hex init fails'
+    def testTuple(self):
+        assert univ.OctetString((1,2,3,4,5)) == ints2octs((1,2,3,4,5)), 'tuple init failed'
     def testStr(self):
         assert str(univ.OctetString('q')) == 'q', '__str__() fails'
     def testSeq(self):
         assert univ.OctetString('q')[0] == str2octs('q')[0],'__getitem__() fails'
+    def testAsOcts(self):
+        assert univ.OctetString('abcd').asOcts() == str2octs('abcd'), 'testAsOcts() fails'
+    def testAsInts(self):
+        assert univ.OctetString('abcd').asInts() == (97, 98, 99, 100), 'testAsInts() fails'
+                
     def testAdd(self):
         assert univ.OctetString('') + 'q' == str2octs('q'), '__add__() fails'
     def testRadd(self):
