@@ -111,10 +111,10 @@ class OctetStringTestCase(unittest.TestCase):
         assert str(univ.OctetString('q')) == 'q', '__str__() fails'
     def testSeq(self):
         assert univ.OctetString('q')[0] == str2octs('q')[0],'__getitem__() fails'
-    def testAsOcts(self):
-        assert univ.OctetString('abcd').asOcts() == str2octs('abcd'), 'testAsOcts() fails'
+    def testAsOctets(self):
+        assert univ.OctetString('abcd').asOctets() == str2octs('abcd'), 'testAsOctets() fails'
     def testAsInts(self):
-        assert univ.OctetString('abcd').asInts() == (97, 98, 99, 100), 'testAsInts() fails'
+        assert univ.OctetString('abcd').asNumbers() == (97, 98, 99, 100), 'testAsNumbers() fails'
                 
     def testAdd(self):
         assert univ.OctetString('') + 'q' == str2octs('q'), '__add__() fails'
