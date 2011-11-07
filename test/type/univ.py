@@ -115,7 +115,15 @@ class OctetStringTestCase(unittest.TestCase):
         assert univ.OctetString('abcd').asOctets() == str2octs('abcd'), 'testAsOctets() fails'
     def testAsInts(self):
         assert univ.OctetString('abcd').asNumbers() == (97, 98, 99, 100), 'testAsNumbers() fails'
-                
+
+    def testEmpty(self):
+        try:
+            str(univ.OctetString())
+        except PyAsn1Error:
+            pass
+        else:
+            assert 0, 'empty OctetString() not reported'
+            
     def testAdd(self):
         assert univ.OctetString('') + 'q' == str2octs('q'), '__add__() fails'
     def testRadd(self):
