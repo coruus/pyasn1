@@ -213,7 +213,7 @@ class RealTestCase(unittest.TestCase):
 
 class ObjectIdentifier(unittest.TestCase):
     def testStr(self):
-        assert str(univ.ObjectIdentifier((1,3,6))) == '(1, 3, 6)'
+        assert str(univ.ObjectIdentifier((1,3,6))) == '1.3.6'
     def testEq(self):
         assert univ.ObjectIdentifier((1,3,6)) == (1,3,6), '__cmp__() fails'
     def testAdd(self):
