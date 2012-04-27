@@ -46,6 +46,8 @@ class IntegerDecoderTestCase(unittest.TestCase):
 class BooleanDecoderTestCase(unittest.TestCase):
     def testTrue(self):
         assert decoder.decode(ints2octs((1, 1, 1))) == (1, null)
+    def testTrueNeg(self):
+        assert decoder.decode(ints2octs((1, 1, 255))) == (1, null)
     def testExtraTrue(self):
         assert decoder.decode(ints2octs((1, 1, 1, 0, 120, 50, 50))) == (1, ints2octs((0, 120, 50, 50)))
     def testFalse(self):
