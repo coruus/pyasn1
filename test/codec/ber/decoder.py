@@ -125,6 +125,21 @@ class ObjectIdentifierDecoderTestCase(unittest.TestCase):
             ints2octs((6, 6, 43, 6, 0, 191, 255, 126))
             ) == ((1,3,6,0,0xffffe), null)
 
+    def testEdges1(self):
+        assert decoder.decode(
+            ints2octs((6, 1, 255))
+            ) == ((6,15), null)
+
+    def testEdges2(self):
+        assert decoder.decode(
+            ints2octs((6, 1, 239))
+            ) == ((5,39), null)
+
+    def testEdges3(self):
+        assert decoder.decode(
+            ints2octs((6, 7, 43, 6, 143, 255, 255, 255, 127))
+            ) == ((1, 3, 6, 4294967295), null)
+
 class SequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Sequence(componentType=namedtype.NamedTypes(
