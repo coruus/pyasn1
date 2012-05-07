@@ -120,7 +120,7 @@ class NullDecoderTestCase(unittest.TestCase):
         assert decoder.decode(ints2octs((5, 0))) == (null, null)
 
 class ObjectIdentifierDecoderTestCase(unittest.TestCase):
-    def testNull(self):
+    def testOID(self):
         assert decoder.decode(
             ints2octs((6, 6, 43, 6, 0, 191, 255, 126))
             ) == ((1,3,6,0,0xffffe), null)
