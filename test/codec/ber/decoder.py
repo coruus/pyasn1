@@ -174,11 +174,21 @@ class ObjectIdentifierDecoderTestCase(unittest.TestCase):
             ints2octs((6, 7, 43, 6, 143, 255, 255, 255, 127))
             ) == ((1, 3, 6, 4294967295), null)
 
-    def testEdges4(self):
+    def testNonLeading0x80(self):
         assert decoder.decode(
-            ints2octs((6, 5, 85, 4, 128, 129, 0))
-            ) == ((2, 5, 4, 128), null)
+            ints2octs((6, 5, 85, 4, 129, 128, 0)),
+            ) == ((2, 5, 4, 16384), null)
 
+    def testLeading0x80(self):
+        try:
+            decoder.decode(
+                ints2octs((6, 5, 85, 4, 128, 129, 0))
+            )
+        except PyAsn1Error:
+            pass
+        else:
+            assert 1, 'Leading 0x80 tolarated'
+ 
 class SequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Sequence(componentType=namedtype.NamedTypes(

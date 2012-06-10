@@ -25,20 +25,4 @@ class OctetStringDecoderTestCase(unittest.TestCase):
             ints2octs((36, 128, 4, 130, 3, 232) + (81,)*1000 + (4, 1, 81, 0, 0))
             ) == (str2octs('Q'*1001), null)
 
-class ObjectIdentifierDecoderTestCase(unittest.TestCase):
-    def testNonLeading0x80(self):
-        assert decoder.decode(
-            ints2octs((6, 5, 85, 4, 129, 128, 0)),
-            ) == ((2, 5, 4, 16384), null)
-
-    def testLeading0x80(self):
-        try:
-            decoder.decode(
-                ints2octs((6, 5, 85, 4, 128, 129, 0))
-            )
-        except PyAsn1Error:
-            pass
-        else:
-            assert 1, 'Leading 0x80 tolarated'
-             
 if __name__ == '__main__': unittest.main()
