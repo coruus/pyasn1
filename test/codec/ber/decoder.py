@@ -188,6 +188,32 @@ class ObjectIdentifierDecoderTestCase(unittest.TestCase):
             pass
         else:
             assert 1, 'Leading 0x80 tolarated'
+
+class RealDecoderTestCase(unittest.TestCase):
+    def testChar(self):
+        assert decoder.decode(
+            ints2octs((9, 7, 3, 49, 50, 51, 69, 49, 49))
+        ) == (univ.Real((123, 10, 11)), null)
+
+    def testBin1(self):
+        assert decoder.decode(
+            ints2octs((9, 4, 128, 245, 4, 77))
+        ) == (univ.Real((1101, 2, -11)), null)
+
+    def testBin2(self):
+        assert decoder.decode(
+            ints2octs((9, 4, 128, 11, 4, 77))
+        ) == (univ.Real((1101, 2, 11)), null)
+
+    def testPlusInf(self):
+        assert decoder.decode(
+            ints2octs((9, 1, 64))
+        ) == (univ.Real('inf'), null)
+ 
+    def testMinusInf(self):
+        assert decoder.decode(
+            ints2octs((9, 1, 65))
+        ) == (univ.Real('-inf'), null)
  
 class SequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
