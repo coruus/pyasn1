@@ -134,10 +134,15 @@ class RealEncoderTestCase(unittest.TestCase):
             univ.Real((123, 10, 11))
             ) == ints2octs((9, 7, 3, 49, 50, 51, 69, 49, 49))
 
-    def testBin(self):
+    def testBin1(self):
         assert encoder.encode(
             univ.Real((1101, 2, 11))
             ) == ints2octs((9, 4, 128, 11, 4, 77))
+
+    def testBin2(self):
+        assert encoder.encode(
+            univ.Real((1101, 2, -11))
+            ) == ints2octs((9, 4, 128, 245, 4, 77))
 
     def testPlusInf(self):
         assert encoder.encode(univ.Real('inf')) == ints2octs((9, 1, 64))
