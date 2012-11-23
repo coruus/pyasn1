@@ -25,7 +25,7 @@ class IntegerEncoderTestCase(unittest.TestCase):
         assert encoder.encode(univ.Integer(-12)) == ints2octs((2, 1, 244))
         
     def testZero(self):
-        assert encoder.encode(univ.Integer(0)) == ints2octs((2, 1, 0))
+        assert encoder.encode(univ.Integer(0)) == ints2octs((2, 0))
         
     def testMinusOne(self):
         assert encoder.encode(univ.Integer(-1)) == ints2octs((2, 1, 255))
@@ -149,6 +149,9 @@ class RealEncoderTestCase(unittest.TestCase):
 
     def testMinusInf(self):
         assert encoder.encode(univ.Real('-inf')) == ints2octs((9, 1, 65))
+        
+    def testZero(self):
+        assert encoder.encode(univ.Real(0)) == ints2octs((9, 0))
         
 class SequenceEncoderTestCase(unittest.TestCase):
     def setUp(self):
