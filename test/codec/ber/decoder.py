@@ -214,6 +214,11 @@ class RealDecoderTestCase(unittest.TestCase):
         assert decoder.decode(
             ints2octs((9, 1, 65))
         ) == (univ.Real('-inf'), null)
+
+    def testEmpty(self):
+        assert decoder.decode(
+            ints2octs((9, 0))
+        ) == (univ.Real(0.0), null)
  
 class SequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
