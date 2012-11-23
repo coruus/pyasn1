@@ -47,6 +47,10 @@ class IntegerTestCase(unittest.TestCase):
         assert str(i) != 'asn1', 'named val __str__() fails'
 
 class BooleanTestCase(unittest.TestCase):
+    def testTruth(self):
+        assert univ.Boolean(True) and univ.Boolean(1), 'Truth initializer fails'
+    def testFalse(self):
+        assert not univ.Boolean(False) and not univ.Boolean(0), 'False initializer fails'
     def testStr(self):
         assert str(univ.Boolean(1)) in ('1', '1L'), 'str() fails'
     def testTag(self):
