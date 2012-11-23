@@ -19,6 +19,8 @@ class IntegerDecoderTestCase(unittest.TestCase):
     def testNegInt(self):
         assert decoder.decode(ints2octs((2, 1, 244))) == (-12, null)
     def testZero(self):
+        assert decoder.decode(ints2octs((2, 0))) == (0, null)
+    def testZeroLong(self):
         assert decoder.decode(ints2octs((2, 1, 0))) == (0, null)
     def testMinusOne(self):
         assert decoder.decode(ints2octs((2, 1, 255))) == (-1, null)
