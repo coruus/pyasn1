@@ -25,7 +25,13 @@ class IntegerEncoderTestCase(unittest.TestCase):
         assert encoder.encode(univ.Integer(-12)) == ints2octs((2, 1, 244))
         
     def testZero(self):
-        assert encoder.encode(univ.Integer(0)) == ints2octs((2, 0))
+        assert encoder.encode(univ.Integer(0)) == ints2octs((2, 1, 0))
+
+    def testCompactZero(self):
+        encoder.IntegerEncoder.supportCompactZero = True
+        substrate = encoder.encode(univ.Integer(0))
+        encoder.IntegerEncoder.supportCompactZero = False
+        assert substrate == ints2octs((2, 0))
         
     def testMinusOne(self):
         assert encoder.encode(univ.Integer(-1)) == ints2octs((2, 1, 255))
