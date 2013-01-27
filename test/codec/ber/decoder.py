@@ -44,6 +44,13 @@ class IntegerDecoderTestCase(unittest.TestCase):
         assert decoder.decode(
             ints2octs((2, 1, 12)), asn1Spec=univ.Integer()
             ) == (12, null)
+    def testTagFormat(self):
+        try:
+            decoder.decode(ints2octs((34, 1, 12)))
+        except PyAsn1Error:
+            pass
+        else:
+            assert 0, 'wrong tagFormat worked out'
 
 class BooleanDecoderTestCase(unittest.TestCase):
     def testTrue(self):
@@ -54,6 +61,13 @@ class BooleanDecoderTestCase(unittest.TestCase):
         assert decoder.decode(ints2octs((1, 1, 1, 0, 120, 50, 50))) == (1, ints2octs((0, 120, 50, 50)))
     def testFalse(self):
         assert decoder.decode(ints2octs((1, 1, 0))) == (0, null)
+    def testTagFormat(self):
+        try:
+            decoder.decode(ints2octs((33, 1, 1)))
+        except PyAsn1Error:
+            pass
+        else:
+            assert 0, 'wrong tagFormat worked out'
 
 class BitStringDecoderTestCase(unittest.TestCase):
     def testDefMode(self):
@@ -154,6 +168,13 @@ class ExpTaggedOctetStringDecoderTestCase(unittest.TestCase):
 class NullDecoderTestCase(unittest.TestCase):
     def testNull(self):
         assert decoder.decode(ints2octs((5, 0))) == (null, null)
+    def testTagFormat(self):
+        try:
+            decoder.decode(ints2octs((37, 0)))
+        except PyAsn1Error:
+            pass
+        else:
+            assert 0, 'wrong tagFormat worked out'
 
 class ObjectIdentifierDecoderTestCase(unittest.TestCase):
     def testOID(self):
@@ -191,6 +212,14 @@ class ObjectIdentifierDecoderTestCase(unittest.TestCase):
         else:
             assert 1, 'Leading 0x80 tolarated'
 
+    def testTagFormat(self):
+        try:
+            decoder.decode(ints2octs((38, 1, 239)))
+        except PyAsn1Error:
+            pass
+        else:
+            assert 0, 'wrong tagFormat worked out'
+
 class RealDecoderTestCase(unittest.TestCase):
     def testChar(self):
         assert decoder.decode(
@@ -222,6 +251,14 @@ class RealDecoderTestCase(unittest.TestCase):
             ints2octs((9, 0))
         ) == (univ.Real(0.0), null)
  
+    def testTagFormat(self):
+        try:
+            decoder.decode(ints2octs((41, 0)))
+        except PyAsn1Error:
+            pass
+        else:
+            assert 0, 'wrong tagFormat worked out'
+
 class SequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Sequence(componentType=namedtype.NamedTypes(
@@ -265,6 +302,16 @@ class SequenceDecoderTestCase(unittest.TestCase):
             ints2octs((48, 128, 5, 0, 36, 128, 4, 11, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 0, 0, 2, 1, 1, 0, 0)),
             substrateFun=lambda a,b,c: (b,c)
             ) == (ints2octs((5, 0, 36, 128, 4, 11, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 0, 0, 2, 1, 1, 0, 0)), -1)
+
+    def testTagFormat(self):
+        try:
+            decoder.decode(
+                ints2octs((16, 18, 5, 0, 4, 11, 113, 117, 105, 99, 107, 32, 98, 114, 111, 119, 110, 2, 1, 1))
+            )
+        except PyAsn1Error:
+            pass
+        else:
+            assert 0, 'wrong tagFormat worked out'
 
 class GuidedSequenceDecoderTestCase(unittest.TestCase):
     def setUp(self):
