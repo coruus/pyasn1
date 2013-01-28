@@ -448,7 +448,8 @@ class ChoiceDecoderTestCase(unittest.TestCase):
     def setUp(self):
         self.s = univ.Choice(componentType=namedtype.NamedTypes(
             namedtype.NamedType('place-holder', univ.Null(null)),
-            namedtype.NamedType('number', univ.Integer(0))
+            namedtype.NamedType('number', univ.Integer(0)),
+            namedtype.NamedType('string', univ.OctetString())
             ))
 
     def testBySpec(self):
@@ -461,6 +462,22 @@ class ChoiceDecoderTestCase(unittest.TestCase):
         self.s.setComponentByPosition(0, univ.Null(null))
         assert decoder.decode(ints2octs((5, 0))) == (self.s, null)
         assert decoder.decode(ints2octs((5, 0))) == (univ.Null(null), null)
+
+    def testUndefLength(self):
+        self.s.setComponentByPosition(2, univ.OctetString('abcdefgh'))
+        assert decoder.decode(ints2octs((36, 128, 4, 3, 97, 98, 99, 4, 3, 100, 101, 102, 4, 2, 103, 104, 0, 0)), asn1Spec=self.s) == (self.s, null)
+
+    def testExplicitTag(self):
+        s = self.s.subtype(explicitTag=tag.Tag(tag.tagClassContext,
+                           tag.tagFormatConstructed, 4))
+        s.setComponentByPosition(0, univ.Null(null))
+        assert decoder.decode(ints2octs((164, 2, 5, 0)), asn1Spec=s) == (s, null)
+
+    def testExplicitTagUndefLength(self):
+        s = self.s.subtype(explicitTag=tag.Tag(tag.tagClassContext,
+                           tag.tagFormatConstructed, 4))
+        s.setComponentByPosition(0, univ.Null(null))
+        assert decoder.decode(ints2octs((164, 128, 5, 0, 0, 0)), asn1Spec=s) == (s, null)
 
 class AnyDecoderTestCase(unittest.TestCase):
     def setUp(self):
