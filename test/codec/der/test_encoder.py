@@ -2,12 +2,15 @@ from pyasn1.type import namedtype, univ
 from pyasn1.codec.der import encoder
 from pyasn1.compat.octets import ints2octs
 from pyasn1.error import PyAsn1Error
-try:
+from sys import version_info
+if version_info[0:2] < (2, 7) or \
+   version_info[0:2] in ( (3, 0), (3, 1) ):
+    try:
+        import unittest2 as unittest
+    except ImportError:
+        import unittest
+else:
     import unittest
-except ImportError:
-    raise PyAsn1Error(
-        'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
-        )
 
 class OctetStringEncoderTestCase(unittest.TestCase):
     def testShortMode(self):
