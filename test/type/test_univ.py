@@ -1,12 +1,15 @@
 from pyasn1.type import univ, tag, constraint, namedtype, namedval, error
 from pyasn1.compat.octets import str2octs, ints2octs
 from pyasn1.error import PyAsn1Error
-try:
+from sys import version_info
+if version_info[0:2] < (2, 7) or \
+   version_info[0:2] in ( (3, 0), (3, 1) ):
+    try:
+        import unittest2 as unittest
+    except ImportError:
+        import unittest
+else:
     import unittest
-except ImportError:
-    raise PyAsn1Error(
-        'PyUnit package\'s missing. See http://pyunit.sourceforge.net/'
-        )
 
 class IntegerTestCase(unittest.TestCase):
     def testStr(self): assert str(univ.Integer(1)) in ('1','1L'),'str() fails'
